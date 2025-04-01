@@ -5,3 +5,12 @@ version = 4
 [[package]]
 name = "html-ussd"
 version = "0.1.0"
+dependencies = [
+ "parse-html",
+]
+
+[[package]]
+name = "parse-html"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4700ab8501722ab9694227d6880dce5faa02735ac88efe76a7a0d782d4c670e6"
