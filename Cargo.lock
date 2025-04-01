@@ -11,6 +11,6 @@ dependencies = [
 
 [[package]]
 name = "parse-html"
-version = "0.3.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4700ab8501722ab9694227d6880dce5faa02735ac88efe76a7a0d782d4c670e6"
+checksum = "4cd6138154e3bc0fde005a0e55e1620d02e293251de190876a6c0af72ade40d3"
