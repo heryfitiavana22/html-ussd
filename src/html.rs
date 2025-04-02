@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{collections::HashMap, fmt::Display};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Tag {
@@ -16,7 +16,7 @@ pub enum Tag {
 #[derive(Debug, PartialEq, Clone)]
 pub struct TagElement {
     pub tag_name: Tag,
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
     pub children: Vec<TagElement>,
 }
 
@@ -27,26 +27,26 @@ pub struct HtmlUssdTree {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Html {
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
     pub head: Head,
     pub body: Body,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Head {
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
     pub title: Title,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Title {
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
     pub text: String,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Body {
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
     pub paragraphs: Vec<Paragraph>,
     pub content: BodyContent,
 }
@@ -55,22 +55,44 @@ pub struct Body {
 pub enum BodyContent {
     Form(Form),
     Links(Vec<Link>),
+    Empty,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Form {
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
+    pub input: Input,
+    pub method: FormMethod,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum FormMethod {
+    Get,
+    Post,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct Input {
+    pub attributes: HashMap<String, String>,
+    pub input_type: InputType,
+    pub name: String,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum InputType {
+    Text,
+    Number,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Paragraph {
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
     pub text: String,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Link {
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
     pub text: String,
     pub href: Href,
 }
@@ -78,7 +100,7 @@ pub struct Link {
 #[derive(Debug, PartialEq, Clone)]
 pub struct Href {
     pub url: String,
-    pub href_type: HrefType
+    pub href_type: HrefType,
 }
 
 #[derive(Debug, PartialEq, Clone)]

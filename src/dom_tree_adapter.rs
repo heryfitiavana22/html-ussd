@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use parse_html::{dom::dom_tree::DomTree, node::Node};
 
 use crate::{
@@ -29,14 +31,14 @@ impl DomTreeAdapter {
 
                     tags.push(TagElement {
                         tag_name,
-                        attributes: element.attributes.clone(),
+                        attributes: element.attributes.clone().into_iter().collect(),
                         children: self.transform_nodes(element.children)?,
                     });
                 }
                 Node::Text(text) => {
                     tags.push(TagElement {
                         tag_name: Tag::Text(text),
-                        attributes: vec![],
+                        attributes: HashMap::new(),
                         children: vec![],
                     });
                 }
