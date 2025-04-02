@@ -17,31 +17,31 @@ impl ValidatorAndTransformer {
         if option_html.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Html));
         };
-        let html = option_html.unwrap();
-        if html.tag_name != Tag::Html {
+        let html_element = option_html.unwrap();
+        if html_element.tag_name != Tag::Html {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Html));
         }
-        if html.children.len() > 2 {
+        if html_element.children.len() > 2 {
             return Err(ValidatorAndTransformerError::UnexpectedChilds(
-                html.children.clone(),
+                html_element.children.clone(),
             ));
         }
 
         // <head>
-        let option_head = html.children.get(0);
+        let option_head = html_element.children.get(0);
         if option_head.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Head));
         };
-        let head = option_head.unwrap();
-        if head.tag_name != Tag::Head {
+        let head_element = option_head.unwrap();
+        if head_element.tag_name != Tag::Head {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Head));
         }
-        if head.children.len() > 1 {
+        if head_element.children.len() > 1 {
             return Err(ValidatorAndTransformerError::UnexpectedChilds(
-                head.children.clone(),
+                head_element.children.clone(),
             ));
         }
-        let option_title = head.children.get(0);
+        let option_title = head_element.children.get(0);
         if option_title.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Title));
         };
@@ -57,15 +57,15 @@ impl ValidatorAndTransformer {
         let title = self.get_text(title_element.clone())?;
 
         // <body>
-        let option_body = html.children.get(1);
+        let option_body = html_element.children.get(1);
         if option_body.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Body));
         };
-        let body = option_body.unwrap();
-        if body.tag_name != Tag::Body {
+        let body_element = option_body.unwrap();
+        if body_element.tag_name != Tag::Body {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Body));
         }
-        if body.children.len() == 0 {
+        if body_element.children.len() == 0 {
             return Err(ValidatorAndTransformerError::EmptyBody);
         }
 
@@ -73,13 +73,13 @@ impl ValidatorAndTransformer {
         let mut body_content: BodyContent = BodyContent::Empty;
         let mut links: Vec<Link> = vec![];
 
-        for child_body in &body.children {
-            match &child_body.tag_name {
+        for child_body_element in &body_element.children {
+            match &child_body_element.tag_name {
                 Tag::Text(_) | Tag::P => {
-                    let text_link = self.get_text(child_body.clone())?;
+                    let text_link = self.get_text(child_body_element.clone())?;
                     body_paragraphs.push(Paragraph {
                         text: text_link,
-                        attributes: child_body.attributes.clone(),
+                        attributes: child_body_element.attributes.clone(),
                     });
                 }
                 Tag::Form => {
@@ -91,26 +91,26 @@ impl ValidatorAndTransformer {
                     }
                     form_found = true;
 
-                    if child_body.children.len() > 1 {
+                    if child_body_element.children.len() > 1 {
                         return Err(ValidatorAndTransformerError::UnexpectedChilds(
-                            child_body.children.clone(),
+                            child_body_element.children.clone(),
                         ));
                     }
 
-                    let option_input = child_body.children.get(0);
+                    let option_input = child_body_element.children.get(0);
                     if option_input.is_none() {
                         return Err(ValidatorAndTransformerError::FormMustHaveOneInput);
                     };
-                    let input = option_input.unwrap();
-                    if input.tag_name != Tag::Input {
+                    let input_element = option_input.unwrap();
+                    if input_element.tag_name != Tag::Input {
                         return Err(ValidatorAndTransformerError::UnexpectedTag(
-                            input.tag_name.clone(),
+                            input_element.tag_name.clone(),
                         ));
                     }
 
                     // <input type="..." />
                     let mut input_type: InputType = InputType::Text;
-                    let option_type_attr = input.attributes.get_key_value("type");
+                    let option_type_attr = input_element.attributes.get_key_value("type");
                     if let Some((_, value)) = option_type_attr {
                         if value != "text" && value != "number" {
                             return Err(ValidatorAndTransformerError::InvalidInputType(
@@ -124,17 +124,17 @@ impl ValidatorAndTransformer {
                         return Err(ValidatorAndTransformerError::MissingInputType);
                     }
 
-                    if input.children.len() > 0 {
+                    if input_element.children.len() > 0 {
                         return Err(ValidatorAndTransformerError::UnexpectedChilds(
-                            input.children.clone(),
+                            input_element.children.clone(),
                         ));
                     }
 
                     body_content = BodyContent::Form(Form {
-                        attributes: child_body.attributes.clone(),
+                        attributes: child_body_element.attributes.clone(),
                         method: FormMethod::Get,
                         input: Input {
-                            attributes: input.attributes.clone(),
+                            attributes: input_element.attributes.clone(),
                             name: "name".to_string(),
                             input_type,
                         },
@@ -145,13 +145,13 @@ impl ValidatorAndTransformer {
                         return Err(ValidatorAndTransformerError::FormAndLinkTogether);
                     }
                     link_found = true;
-                    let option_href = child_body.attributes.get_key_value("href");
+                    let option_href = child_body_element.attributes.get_key_value("href");
                     if option_href.is_none() {
                         return Err(ValidatorAndTransformerError::MissingHref);
                     }
                     let href = option_href.unwrap().1;
 
-                    let option_text = child_body.children.get(0);
+                    let option_text = child_body_element.children.get(0);
                     if option_text.is_none() {
                         return Err(ValidatorAndTransformerError::MissingTextInLink);
                     };
@@ -159,7 +159,7 @@ impl ValidatorAndTransformer {
                     let text_link = self.get_text(text_element.clone())?;
 
                     links.push(Link {
-                        attributes: child_body.attributes.clone(),
+                        attributes: child_body_element.attributes.clone(),
                         text: text_link,
                         href: Href {
                             url: href.to_string(),
@@ -169,7 +169,7 @@ impl ValidatorAndTransformer {
                 }
                 _ => {
                     return Err(ValidatorAndTransformerError::UnexpectedTag(
-                        child_body.tag_name.clone(),
+                        child_body_element.tag_name.clone(),
                     ));
                 }
             }
@@ -178,16 +178,16 @@ impl ValidatorAndTransformer {
         let html_tree = {
             HtmlUssdTree {
                 source: Html {
-                    attributes: html.attributes.clone(),
+                    attributes: html_element.attributes.clone(),
                     head: Head {
-                        attributes: head.attributes.clone(),
+                        attributes: head_element.attributes.clone(),
                         title: Title {
                             attributes: title_element.attributes.clone(),
                             text: title,
                         },
                     },
                     body: Body {
-                        attributes: body.attributes.clone(),
+                        attributes: body_element.attributes.clone(),
                         paragraphs: body_paragraphs,
                         content: body_content,
                     },
