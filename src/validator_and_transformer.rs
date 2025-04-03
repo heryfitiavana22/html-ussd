@@ -195,6 +195,10 @@ impl ValidatorAndTransformer {
             }
         }
 
+        if link_found {
+            body_content = BodyContent::Links(links);
+        }
+
         let html_tree = {
             HtmlUssdTree {
                 source: Html {
