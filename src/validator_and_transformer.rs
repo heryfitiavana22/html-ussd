@@ -190,6 +190,7 @@ impl ValidatorAndTransformer {
                         text: text_link,
                         href: Href {
                             url: href.to_string(),
+                            // TODO: verify hreftype
                             href_type: HrefType::File,
                         },
                     });
