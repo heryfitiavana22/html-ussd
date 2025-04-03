@@ -63,6 +63,7 @@ pub struct Form {
     pub attributes: HashMap<String, String>,
     pub input: Input,
     pub method: FormMethod,
+    pub action: String,
 }
 
 #[derive(Debug, PartialEq, Clone)]

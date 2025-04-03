@@ -116,6 +116,26 @@ impl ValidatorAndTransformer {
                         ));
                     }
 
+                    let mut form_method: FormMethod = FormMethod::Get;
+                    let option_method_attr = child_body_element.attributes.get_key_value("method");
+                    if let Some((_, value)) = option_method_attr {
+                        if value.to_lowercase() != "get" && value.to_lowercase() != "post" {
+                            return Err(ValidatorAndTransformerError::InvalidFormMethod(
+                                value.clone(),
+                            ));
+                        }
+                        if value.to_lowercase() == "post" {
+                            form_method = FormMethod::Post
+                        }
+                    } else {
+                        return Err(ValidatorAndTransformerError::MissingFormMethod);
+                    }
+                    let option_action_attr = child_body_element.attributes.get_key_value("action");
+                    if option_action_attr.is_none() {
+                        return Err(ValidatorAndTransformerError::MissingFormAction);
+                    }
+
+                    // <input />
                     let option_input = child_body_element.children.get(0);
                     if option_input.is_none() {
                         return Err(ValidatorAndTransformerError::FormMustHaveOneInput);
@@ -158,7 +178,8 @@ impl ValidatorAndTransformer {
 
                     body_content = BodyContent::Form(Form {
                         attributes: child_body_element.attributes.clone(),
-                        method: FormMethod::Get,
+                        method: form_method,
+                        action: option_action_attr.unwrap().1.to_string(),
                         input: Input {
                             attributes: input_element.attributes.clone(),
                             name: "name".to_string(),
@@ -291,6 +312,9 @@ pub enum ValidatorAndTransformerError {
     UnexpectedChilds(TagElement, Vec<TagElement>),
     FormMustHaveOneInput,
     InvalidInputType(String),
+    InvalidFormMethod(String),
+    MissingFormAction,
+    MissingFormMethod,
     EmptyBody,
     MissingInputType,
     MissingInputPlaceholder,
