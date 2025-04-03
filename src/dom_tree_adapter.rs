@@ -1,15 +1,15 @@
 use std::collections::HashMap;
 
-use parse_html::{dom::dom_tree::DomTree, node::Node};
+use parse_html::{
+    dom::dom_tree::DomTree, lexer::tokenizer::Lexer, node::Node, parser::ast::Parser,
+};
 
 use crate::{
     adapter::{AdapterError, TagAdapter},
     html::{Tag, TagElement},
 };
 
-pub struct DomTreeAdapter {
-    pub tree: DomTree,
-}
+pub struct DomTreeAdapter;
 
 impl DomTreeAdapter {
     fn transform_nodes(&self, nodes: Vec<Node>) -> Result<Vec<TagElement>, AdapterError> {
@@ -50,90 +50,54 @@ impl DomTreeAdapter {
 }
 
 impl TagAdapter for DomTreeAdapter {
-    fn transform(&self) -> Result<Vec<TagElement>, AdapterError> {
-        self.transform_nodes(self.tree.nodes.clone())
+    fn transform(&self, html: &str) -> Result<Vec<TagElement>, AdapterError> {
+        match DomTree::new::<Lexer, Parser>(html) {
+            Ok(dom) => self.transform_nodes(dom.nodes.clone()),
+
+            Err(e) => Err(AdapterError::ParsingError(e.to_string())),
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use parse_html::node::ElementNode;
 
     use super::*;
 
     #[test]
     fn valid_conversion() {
-        let dom_tree = DomTree {
-            nodes: vec![Node::Element(ElementNode {
-                tag_name: "html".to_string(),
-                attributes: vec![],
-                children: vec![
-                    Node::Element(ElementNode {
-                        tag_name: "head".to_string(),
-                        attributes: vec![],
-                        children: vec![Node::Element(ElementNode {
-                            tag_name: "title".to_string(),
-                            attributes: vec![],
-                            children: vec![Node::Text("Test Title".to_string())],
-                        })],
-                    }),
-                    Node::Element(ElementNode {
-                        tag_name: "body".to_string(),
-                        attributes: vec![],
-                        children: vec![Node::Element(ElementNode {
-                            tag_name: "p".to_string(),
-                            attributes: vec![],
-                            children: vec![Node::Text("Hello, USSD!".to_string())],
-                        })],
-                    }),
-                ],
-            })],
-        };
-
-        let adapter = DomTreeAdapter { tree: dom_tree };
-        let result = adapter.transform();
+        let html = r#"
+    <html lang="en">
+    <head>
+        <title>Document</title>
+    </head>
+    <body id="container">
+        ok ceci est un texte
+        <a href="2" id="l1">link1</a>
+        <a href="1">link2</a>
+    </body>
+    </html>"#;
+        let adapter = DomTreeAdapter;
+        let result = adapter.transform(html);
 
         assert!(result.is_ok());
     }
 
     #[test]
     fn unexpected_tag() {
-        let dom_tree = DomTree {
-            nodes: vec![Node::Element(ElementNode {
-                tag_name: "html".to_string(),
-                attributes: vec![],
-                children: vec![
-                    Node::Element(ElementNode {
-                        tag_name: "head".to_string(),
-                        attributes: vec![],
-                        children: vec![Node::Element(ElementNode {
-                            tag_name: "title".to_string(),
-                            attributes: vec![],
-                            children: vec![Node::Text("Test Title".to_string())],
-                        })],
-                    }),
-                    Node::Element(ElementNode {
-                        tag_name: "body".to_string(),
-                        attributes: vec![],
-                        children: vec![
-                            Node::Element(ElementNode {
-                                tag_name: "p".to_string(),
-                                attributes: vec![],
-                                children: vec![Node::Text("Hello, USSD!".to_string())],
-                            }),
-                            Node::Element(ElementNode {
-                                tag_name: "button".to_string(),
-                                attributes: vec![],
-                                children: vec![],
-                            }),
-                        ],
-                    }),
-                ],
-            })],
-        };
-
-        let adapter = DomTreeAdapter { tree: dom_tree };
-        let result = adapter.transform();
+        let html = r#"
+    <html lang="en">
+    <head>
+        <title>Document</title>
+    </head>
+    <body id="container">
+        ok ceci est un texte
+        <a href="2" id="l1">link1</a>
+        <button href="1">link2</button>
+    </body>
+    </html>"#;
+        let adapter = DomTreeAdapter;
+        let result = adapter.transform(html);
 
         assert!(matches!(result, Err(AdapterError::UnexcepetedTag(tag)) if tag == "button"));
     }

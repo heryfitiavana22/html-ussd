@@ -1,8 +1,11 @@
 use html_ussd::{
-    adapter::TagAdapter, renderer::{Renderer, UserInput}, validator_and_transformer::ValidatorAndTransformer,
+    adapter::TagAdapter,
+    renderer::{Renderer, UserInput},
+    validator_and_transformer::ValidatorAndTransformer,
 };
 
 pub struct Screen<R: Renderer> {
+    pub html: String,
     pub adapter: Box<dyn TagAdapter>,
     pub validator: ValidatorAndTransformer,
     pub renderer: R,
@@ -10,7 +13,7 @@ pub struct Screen<R: Renderer> {
 
 impl<R: Renderer> Screen<R> {
     pub fn run(&self) {
-        let tags = match self.adapter.transform() {
+        let tags = match self.adapter.transform(&self.html) {
             Ok(tags) => tags,
             Err(e) => {
                 eprintln!("Adapter error : {:?}", e);

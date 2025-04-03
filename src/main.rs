@@ -1,5 +1,7 @@
-use html_ussd::{dom_tree_adapter::DomTreeAdapter, terminal_renderer::TerminalRenderer, validator_and_transformer::ValidatorAndTransformer};
-use parse_html::{dom::dom_tree::DomTree, lexer::tokenizer::Lexer, parser::ast::Parser};
+use html_ussd::{
+    dom_tree_adapter::DomTreeAdapter, terminal_renderer::TerminalRenderer,
+    validator_and_transformer::ValidatorAndTransformer,
+};
 use screen::Screen;
 
 pub mod adapter;
@@ -24,19 +26,11 @@ fn main() {
     </body>
     </html>"#;
 
-    match DomTree::new::<Lexer, Parser>(html) {
-        Ok(dom) => {
-            let screen = Screen {
-                adapter: Box::new(DomTreeAdapter { tree: dom }),
-                renderer: TerminalRenderer,
-                validator: ValidatorAndTransformer,
-            };
-            screen.run();
-        }
-        
-        Err(e) => println!("Erreur de parsing : {:?}", e),
-    }
+    let screen = Screen {
+        html: html.to_string(),
+        adapter: Box::new(DomTreeAdapter),
+        renderer: TerminalRenderer,
+        validator: ValidatorAndTransformer,
+    };
+    screen.run();
 }
-
-
-    
