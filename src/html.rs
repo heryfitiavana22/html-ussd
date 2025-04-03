@@ -76,6 +76,7 @@ pub struct Input {
     pub attributes: HashMap<String, String>,
     pub input_type: InputType,
     pub name: String,
+    pub placeholder: String,
 }
 
 #[derive(Debug, PartialEq, Clone)]

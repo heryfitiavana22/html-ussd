@@ -2,7 +2,7 @@ use std::io::{self, Write};
 
 use crate::{
     html::{BodyContent, HtmlUssdTree},
-    renderer::{Renderer, UserInput},
+    renderer::Renderer,
 };
 
 pub struct TerminalRenderer;
@@ -20,14 +20,12 @@ impl Renderer for TerminalRenderer {
         let mut is_empty = false;
         match &tree.source.body.content {
             BodyContent::Form(form) => {
-                // TODO: input placeholder
-                println!("Saisissez une valeur:");
+                println!("{}", form.input.placeholder);
             }
             BodyContent::Links(links) => {
                 for (index, link) in links.iter().enumerate() {
                     println!("{}. {}", index + 1, link.text);
                 }
-                print!("> ");
             }
             BodyContent::Empty => {
                 is_empty = true;
@@ -36,6 +34,7 @@ impl Renderer for TerminalRenderer {
         if is_empty {
             return;
         };
+        print!("> ");
         io::stdout().flush().unwrap();
         let mut input = String::new();
         io::stdin().read_line(&mut input).unwrap();
