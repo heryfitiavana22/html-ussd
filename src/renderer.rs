@@ -3,7 +3,7 @@ use crate::html::HtmlUssdTree;
 pub trait Renderer {
     fn render<F>(&self, tree: &HtmlUssdTree, on_input: F)
     where
-        F: Fn(UserInput);
+        F: Fn(String);
 }
 
 pub enum UserInput {
@@ -11,4 +11,5 @@ pub enum UserInput {
     FormData(String),
     Exit,
     Back,
+    Invalid,
 }

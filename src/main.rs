@@ -10,6 +10,7 @@ pub mod html;
 pub mod renderer;
 pub mod screen;
 pub mod terminal_renderer;
+pub mod ussd_controller;
 pub mod validator_and_transformer;
 
 fn main() {

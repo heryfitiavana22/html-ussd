@@ -1,6 +1,7 @@
 use html_ussd::{
     adapter::TagAdapter,
-    renderer::{Renderer, UserInput},
+    html::{BodyContent, InputType},
+    renderer::Renderer,
     validator_and_transformer::ValidatorAndTransformer,
 };
 
@@ -30,11 +31,30 @@ impl<R: Renderer> Screen<R> {
         };
 
         self.renderer.render(&tree, |user_input| {
-            match user_input {
-                UserInput::Navigation(index) => { /* ... */ }
-                UserInput::FormData(data) => { /* ... */ }
-                UserInput::Exit => { /* ... */ }
-                UserInput::Back => { /* ... */ }
+            match &tree.source.body.content {
+                BodyContent::Links(links) => {
+                    if let Ok(index) = user_input.parse::<usize>() {
+                        if index > 0 && index <= links.len() {
+                            println!("navigate to index : {}", index - 1);
+                            return;
+                        }
+                    }
+                    // invalid
+                    println!("invalid input links");
+                }
+                BodyContent::Form(form) => {
+                    let valid = match form.input.input_type {
+                        InputType::Text => true,
+                        InputType::Number => user_input.parse::<f64>().is_ok(),
+                    };
+
+                    if valid {
+                        println!("form data : {}", user_input);
+                    } else {
+                        println!("invalid form dats");
+                    }
+                }
+                BodyContent::Empty => {}
             }
         });
     }

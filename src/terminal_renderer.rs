@@ -1,3 +1,5 @@
+use std::io::{self, Write};
+
 use crate::{
     html::{BodyContent, HtmlUssdTree},
     renderer::{Renderer, UserInput},
@@ -8,13 +10,14 @@ pub struct TerminalRenderer;
 impl Renderer for TerminalRenderer {
     fn render<F>(&self, tree: &HtmlUssdTree, on_input: F)
     where
-        F: Fn(UserInput),
+        F: Fn(String),
     {
         println!("\n=== {} ===\n", tree.source.head.title.text);
         for paragraph in &tree.source.body.paragraphs {
             println!("{}", paragraph.text);
         }
 
+        let mut is_empty = false;
         match &tree.source.body.content {
             BodyContent::Form(form) => {
                 // TODO: input placeholder
@@ -22,14 +25,21 @@ impl Renderer for TerminalRenderer {
             }
             BodyContent::Links(links) => {
                 for (index, link) in links.iter().enumerate() {
-                    println!("{}. {} \n", index + 1, link.text);
+                    println!("{}. {}", index + 1, link.text);
                 }
+                print!("> ");
             }
             BodyContent::Empty => {
-                println!("Fin de l'application.");
+                is_empty = true;
             }
         }
-
-        // TODO: handle on_input
+        if is_empty {
+            return;
+        };
+        io::stdout().flush().unwrap();
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
+        let input = input.trim();
+        on_input(input.to_string())
     }
 }
