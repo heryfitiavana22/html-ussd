@@ -185,13 +185,20 @@ impl ValidatorAndTransformer {
                     let text_element = option_text.unwrap();
                     let text_link = self.get_text(text_element.clone())?;
 
+                    let href_type = if href.ends_with(".html") {
+                        HrefType::File
+                    } else if href.starts_with("http://") || href.starts_with("https://") {
+                        HrefType::Server
+                    } else {
+                        return Err(ValidatorAndTransformerError::InvalidHref(href.to_string()));
+                    };
+
                     links.push(Link {
                         attributes: child_body_element.attributes.clone(),
                         text: text_link,
                         href: Href {
                             url: href.to_string(),
-                            // TODO: verify hreftype
-                            href_type: HrefType::File,
+                            href_type,
                         },
                     });
                 }
@@ -291,4 +298,5 @@ pub enum ValidatorAndTransformerError {
     MissingHref,
     MissingTextInLink,
     MissingTextInTitle,
+    InvalidHref(String),
 }

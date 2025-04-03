@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use reqwest::blocking::get;
+
 use crate::{
     adapter::TagAdapter,
     html::{BodyContent, HrefType, InputType},
@@ -62,6 +64,18 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             }
                         } else {
                             println!("navigate to server : {}", next_link.href.url);
+                            match get(&next_link.href.url) {
+                                Ok(response) => {
+                                    if let Ok(html) = response.text() {
+                                        self.display(&html);
+                                    } else {
+                                        println!("Failed to read response body");
+                                    }
+                                }
+                                Err(err) => {
+                                    println!("Failed to fetch page: {:?}", err);
+                                }
+                            }
                             return;
                         }
                     }

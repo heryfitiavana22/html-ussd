@@ -22,6 +22,7 @@ fn main() {
     </head>
     <body id="container">
         bievenue
+        <a href="http://localhost:8888/main-page" id="l1">server</a>
         <a href="page2.html" id="l1">page 2</a>
         <a href="page3.html">page 3</a>
     </body>
