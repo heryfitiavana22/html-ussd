@@ -20,7 +20,7 @@ fn tag_element(
 }
 
 #[test]
-fn test_validator_valid_html() {
+fn valid_html() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -52,7 +52,7 @@ fn test_validator_valid_html() {
 }
 
 #[test]
-fn test_validator_missing_html_tag() {
+fn missing_html_tag() {
     let html_tree = vec![tag_element(Tag::Body, &[], vec![])];
 
     let validator = ValidatorAndTransformer;
@@ -65,7 +65,7 @@ fn test_validator_missing_html_tag() {
 }
 
 #[test]
-fn test_validator_empty_body() {
+fn empty_body() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -93,7 +93,7 @@ fn test_validator_empty_body() {
 }
 
 #[test]
-fn test_validator_form_and_link_together() {
+fn form_and_link_together() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -140,7 +140,7 @@ fn test_validator_form_and_link_together() {
 }
 
 #[test]
-fn test_validator_invalid_input_type() {
+fn invalid_input_type() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -176,7 +176,7 @@ fn test_validator_invalid_input_type() {
 }
 
 #[test]
-fn test_validator_missing_input_type() {
+fn missing_input_type() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -212,7 +212,7 @@ fn test_validator_missing_input_type() {
 }
 
 #[test]
-fn test_validator_missing_input_placeholder() {
+fn missing_input_placeholder() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -248,7 +248,7 @@ fn test_validator_missing_input_placeholder() {
 }
 
 #[test]
-fn test_validator_link_without_href() {
+fn link_without_href() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -288,7 +288,7 @@ fn test_validator_link_without_href() {
 }
 
 #[test]
-fn test_validator_link_without_text() {
+fn link_without_text() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
