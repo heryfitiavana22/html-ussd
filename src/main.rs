@@ -1,7 +1,10 @@
 use std::collections::HashMap;
 
 use html_ussd::{
-    adapter::dom_tree_adapter::DomTreeAdapter, renderer::terminal_renderer::TerminalRenderer, ussd_controller::UssdController, validator_and_transformer::ValidatorAndTransformer
+    adapter::dom_tree_adapter::DomTreeAdapter,
+    renderer::terminal_renderer::TerminalRenderer,
+    ussd_controller::{NewController, UssdController},
+    validator_and_transformer::ValidatorAndTransformer,
 };
 
 pub mod adapter;
@@ -50,12 +53,12 @@ fn main() {
     pages.insert("page2.html".to_string(), page2.to_string());
     pages.insert("page3.html".to_string(), page3.to_string());
 
-    let ussd_controller = UssdController {
+    let ussd_controller = UssdController::new(NewController {
         main_page: main_page.to_string(),
         pages,
         adapter: DomTreeAdapter,
         renderer: TerminalRenderer,
         validator: ValidatorAndTransformer,
-    };
+    });
     ussd_controller.run();
 }
