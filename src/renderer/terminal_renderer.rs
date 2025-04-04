@@ -8,7 +8,11 @@ pub struct TerminalRenderer;
 
 impl Renderer for TerminalRenderer {
     fn render(&self, params: RenderParams) {
-        let RenderParams { tree, on_input, is_main_page } = params;
+        let RenderParams {
+            tree,
+            on_input,
+            is_main_page,
+        } = params;
         println!("\n=== {} ===\n", tree.source.head.title.text);
         for paragraph in &tree.source.body.paragraphs {
             println!("{}", paragraph.text);
@@ -38,6 +42,11 @@ impl Renderer for TerminalRenderer {
         if is_empty {
             return;
         };
+        if !is_main_page {
+            println!("----");
+            println!("0. Retour");
+            println!("00. Accueil");
+        }
         let mut rl = match DefaultEditor::new() {
             Ok(editor) => editor,
             Err(err) => {
