@@ -142,8 +142,9 @@ impl ValidatorAndTransformer {
                     };
                     let input_element = option_input.unwrap();
                     if input_element.tag_name != Tag::Input {
-                        return Err(ValidatorAndTransformerError::UnexpectedTag(
-                            input_element.tag_name.clone(),
+                        return Err(ValidatorAndTransformerError::UnexpectedChilds(
+                            child_body_element.clone(),
+                            child_body_element.children.clone(),
                         ));
                     }
 

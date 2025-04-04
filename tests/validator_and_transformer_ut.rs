@@ -140,6 +140,154 @@ fn form_and_link_together() {
 }
 
 #[test]
+fn invalid_form_method() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![tag_element(
+                    Tag::Form,
+                    &[("method", "gett"), ("action", "/")],
+                    vec![tag_element(Tag::Input, &[("type", "text")], vec![])],
+                )],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::InvalidFormMethod(_))
+    ));
+}
+
+#[test]
+fn missing_input_in_form() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![tag_element(
+                    Tag::Form,
+                    &[("method", "get"), ("action", "/")],
+                    vec![],
+                )],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::FormMustHaveOneInput)
+    ));
+}
+
+#[test]
+fn invalid_child_form() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![tag_element(
+                    Tag::Form,
+                    &[("method", "get"), ("action", "/")],
+                    vec![tag_element(
+                        Tag::Text("ok".to_string()),
+                        &[("type", "text")],
+                        vec![],
+                    )],
+                )],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::UnexpectedChilds(_, _))
+    ));
+}
+
+#[test]
+fn missing_form_action() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![tag_element(
+                    Tag::Form,
+                    &[("method", "get")],
+                    vec![tag_element(Tag::Input, &[("type", "text")], vec![])],
+                )],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::MissingFormAction)
+    ));
+}
+
+#[test]
 fn invalid_input_type() {
     let html_tree = vec![tag_element(
         Tag::Html,
@@ -288,7 +436,7 @@ fn link_without_href() {
 }
 
 #[test]
-fn link_without_text() {
+fn link_with_invalid_child() {
     let html_tree = vec![tag_element(
         Tag::Html,
         &[],
@@ -305,7 +453,11 @@ fn link_without_text() {
             tag_element(
                 Tag::Body,
                 &[],
-                vec![tag_element(Tag::Link, &[("href", "test.html")], vec![])],
+                vec![tag_element(
+                    Tag::Link,
+                    &[("href", "test.html")],
+                    vec![tag_element(Tag::P, &[], vec![])],
+                )],
             ),
         ],
     )];
@@ -315,6 +467,6 @@ fn link_without_text() {
 
     assert!(matches!(
         result,
-        Err(ValidatorAndTransformerError::MissingTextInLink)
+        Err(ValidatorAndTransformerError::TextExpected(_))
     ));
 }
