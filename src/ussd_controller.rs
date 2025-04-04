@@ -63,13 +63,12 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                                 return;
                             }
                         } else {
-                            println!("navigate to server : {}", next_link.href.url);
                             match get(&next_link.href.url) {
                                 Ok(response) => {
                                     if let Ok(html) = response.text() {
                                         self.display(&html);
                                     } else {
-                                        println!("Failed to read response body");
+                                        println!("Failed to read response text");
                                     }
                                 }
                                 Err(err) => {

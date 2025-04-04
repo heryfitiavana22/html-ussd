@@ -113,8 +113,12 @@ fn test_validator_form_and_link_together() {
                 vec![
                     tag_element(
                         Tag::Form,
-                        &[],
-                        vec![tag_element(Tag::Input, &[("type", "text")], vec![])],
+                        &[("method", "get"), ("action", "/")],
+                        vec![tag_element(
+                            Tag::Input,
+                            &[("type", "text"), ("placeholder", "text")],
+                            vec![],
+                        )],
                     ),
                     tag_element(
                         Tag::Link,
@@ -155,7 +159,7 @@ fn test_validator_invalid_input_type() {
                 &[],
                 vec![tag_element(
                     Tag::Form,
-                    &[],
+                    &[("method", "get"), ("action", "/")],
                     vec![tag_element(Tag::Input, &[("type", "email")], vec![])],
                 )],
             ),
@@ -168,6 +172,78 @@ fn test_validator_invalid_input_type() {
     assert!(matches!(
         result,
         Err(ValidatorAndTransformerError::InvalidInputType(_))
+    ));
+}
+
+#[test]
+fn test_validator_missing_input_type() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![tag_element(
+                    Tag::Form,
+                    &[("method", "get"), ("action", "/")],
+                    vec![tag_element(Tag::Input, &[], vec![])],
+                )],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::MissingInputType)
+    ));
+}
+
+#[test]
+fn test_validator_missing_input_placeholder() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![tag_element(
+                    Tag::Form,
+                    &[("method", "get"), ("action", "/")],
+                    vec![tag_element(Tag::Input, &[("type", "text")], vec![])],
+                )],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::MissingInputPlaceholder)
     ));
 }
 
