@@ -170,6 +170,11 @@ impl ValidatorAndTransformer {
                         return Err(ValidatorAndTransformerError::MissingInputPlaceholder);
                     }
 
+                    let option_name_attr = input_element.attributes.get_key_value("name");
+                    if option_name_attr.is_none() {
+                        return Err(ValidatorAndTransformerError::MissingInputName);
+                    }
+
                     if input_element.children.len() > 0 {
                         return Err(ValidatorAndTransformerError::UnexpectedChilds(
                             input_element.clone(),
@@ -183,7 +188,7 @@ impl ValidatorAndTransformer {
                         action: option_action_attr.unwrap().1.to_string(),
                         input: Input {
                             attributes: input_element.attributes.clone(),
-                            name: "name".to_string(),
+                            name: option_name_attr.unwrap().1.to_string(),
                             input_type,
                             placeholder: option_placeholder_attr.unwrap().1.to_string(),
                         },
@@ -319,6 +324,7 @@ pub enum ValidatorAndTransformerError {
     EmptyBody,
     MissingInputType,
     MissingInputPlaceholder,
+    MissingInputName,
     MutlipleForm,
     MissingHref,
     MissingTextInLink,

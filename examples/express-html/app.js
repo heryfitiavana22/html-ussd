@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "pages"));
@@ -25,9 +26,9 @@ app.get("/solde", (req, res) => {
   res.render("solde");
 });
 
-app.get("/validate-code", (req, res) => {
+app.post("/validate-code", (req, res) => {
   console.log("valid-code");
-  console.log(req.query);
+  console.log(req.body);
   res.render("valid-code");
 });
 
@@ -48,9 +49,9 @@ app.get("/form-post", (req, res) => {
   res.render("form-post");
 });
 
-app.get("/handle-form-post", (req, res) => {
+app.post("/handle-form-post", (req, res) => {
   console.log("handle-form-post");
-  console.log(req.query);
+  console.log(req.body);
   const { code } = req.body;
   res.render("handle-form-post", { code });
 });
