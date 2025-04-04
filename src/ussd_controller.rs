@@ -12,6 +12,7 @@ use crate::{
     validator_and_transformer::ValidatorAndTransformer,
 };
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct HistoryItem {
     pub page: String,
     pub is_main_page: bool,
@@ -67,10 +68,14 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         } = params;
 
         if push_to_history {
-            self.history.borrow_mut().push(HistoryItem {
+            let mut history = self.history.borrow_mut();
+            history.push(HistoryItem {
                 page: html.to_string(),
                 is_main_page,
             });
+            // println!("push_to_history : {:?}", history);
+            // println!("push_to_history.len : {:?}", history.len());
+            drop(history);
         }
 
         let tags = match self.adapter.transform(html.as_str()) {
@@ -174,20 +179,31 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
     fn go_back(&self) {
         let mut history = self.history.borrow_mut();
         history.pop();
+        // println!("go_back : {:?}", history);
+        // println!("go_back.len : {:?}", history.len());
+
         if let Some(previous) = history.pop() {
             drop(history);
             self.display(DisplayParams {
                 html: previous.page,
                 is_main_page: previous.is_main_page,
-                push_to_history: previous.is_main_page,
+                push_to_history: false,
             });
         } else {
-            println!("No previous page found");
+            drop(history);
+            self.display(DisplayParams {
+                html: self.main_page.clone(),
+                is_main_page: true,
+                push_to_history: true,
+            });
         }
     }
 
     fn go_to_main_page(&self) {
-        self.history.borrow_mut().clear();
+        let mut history = self.history.borrow_mut();
+        history.clear();
+        drop(history);
+
         self.display(DisplayParams {
             html: self.main_page.clone(),
             is_main_page: true,
