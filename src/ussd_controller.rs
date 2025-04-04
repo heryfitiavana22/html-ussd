@@ -187,10 +187,11 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             self.display(DisplayParams {
                 html: previous.page,
                 is_main_page: previous.is_main_page,
-                push_to_history: false,
+                push_to_history: true,
             });
         } else {
             drop(history);
+            // println!("No previous page");
             self.display(DisplayParams {
                 html: self.main_page.clone(),
                 is_main_page: true,
