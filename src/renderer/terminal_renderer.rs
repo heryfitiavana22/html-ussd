@@ -1,6 +1,6 @@
-use std::io::{self, Write};
+use rustyline::DefaultEditor;
 
-use crate::html::{BodyContent, HtmlUssdTree};
+use crate::html::{BodyContent, HtmlUssdTree, InputType};
 
 use super::renderer_trait::Renderer;
 
@@ -17,14 +17,21 @@ impl Renderer for TerminalRenderer {
         }
 
         let mut is_empty = false;
+        let mut input_hint = String::new();
+
         match &tree.source.body.content {
             BodyContent::Form(form) => {
                 println!("{}", form.input.placeholder);
+                input_hint = match form.input.input_type {
+                    InputType::Text => "[abc]".to_string(),
+                    InputType::Number => "[123]".to_string(),
+                };
             }
             BodyContent::Links(links) => {
                 for (index, link) in links.iter().enumerate() {
                     println!("{}. {}", index + 1, link.text);
                 }
+                input_hint = "[#]".to_string()
             }
             BodyContent::Empty => {
                 is_empty = true;
@@ -33,11 +40,19 @@ impl Renderer for TerminalRenderer {
         if is_empty {
             return;
         };
-        print!("> ");
-        io::stdout().flush().unwrap();
-        let mut input = String::new();
-        io::stdin().read_line(&mut input).unwrap();
-        let input = input.trim();
-        on_input(input.to_string())
+        let mut rl = match DefaultEditor::new() {
+            Ok(editor) => editor,
+            Err(err) => {
+                eprintln!("Failed to create editor: {:?}", err);
+                return;
+            }
+        };
+        let readline = rl.readline(format!("{} > ", input_hint).as_str());
+        match readline {
+            Ok(line) => {
+                on_input(line);
+            }
+            Err(_) => println!("No input"),
+        }
     }
 }
