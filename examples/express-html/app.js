@@ -1,18 +1,10 @@
 const express = require("express");
-const fs = require("fs");
 const app = express();
+const path = require("path");
 app.use(express.json());
 
-function renderFile(req, res, file) {
-  fs.readFile(file, "utf8", (err, data) => {
-    if (err) {
-      res.status(500).send("Erreur serveur");
-    } else {
-      res.set("Content-Type", "text/html");
-      res.send(data);
-    }
-  });
-}
+app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "pages"));
 
 app.get("/", (req, res) => {
   res.send("it's work");
@@ -20,27 +12,47 @@ app.get("/", (req, res) => {
 
 app.get("/main-page", (req, res) => {
   console.log("main-page");
-  renderFile(req, res, "./pages/main-page.html");
+  res.render("main-page");
 });
 
 app.get("/paiment", (req, res) => {
   console.log("paiment");
-
-  renderFile(req, res, "./pages/paiement.html");
+  res.render("paiement");
 });
 
 app.get("/solde", (req, res) => {
   console.log("solde");
-
-  renderFile(req, res, "./pages/solde.html");
+  res.render("solde");
 });
 
 app.get("/validate-code", (req, res) => {
   console.log("valid-code");
   console.log(req.query);
-  
+  res.render("valid-code");
+});
 
-  renderFile(req, res, "./pages/valid-code.html");
+app.get("/form-get", (req, res) => {
+  console.log("form-get");
+  res.render("form-get");
+});
+
+app.get("/handle-form-get", (req, res) => {
+  console.log("handle-form-get");
+  console.log(req.query);
+  const { text } = req.query;
+  res.render("handle-form-get", { text });
+});
+
+app.get("/form-post", (req, res) => {
+  console.log("form-post");
+  res.render("form-post");
+});
+
+app.get("/handle-form-post", (req, res) => {
+  console.log("handle-form-post");
+  console.log(req.query);
+  const { code } = req.body;
+  res.render("handle-form-post", { code });
 });
 
 app.use((req, res) => {

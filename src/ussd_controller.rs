@@ -58,7 +58,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
 
                         if next_link.href.href_type == HrefType::File {
                             if let Some(next_html) = self.pages.get(&next_link.href.url) {
-                                println!("navigate to : {}", next_link.href.url);
+                                // println!("navigate to : {}", next_link.href.url);
                                 self.display(&next_html);
                                 return;
                             } else {
