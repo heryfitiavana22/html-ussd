@@ -15,7 +15,7 @@ function renderFile(req, res, file) {
 }
 
 app.get("/", (req, res) => {
-  res.send("it's work")
+  res.send("it's work");
 });
 
 app.get("/main-page", (req, res) => {
@@ -36,10 +36,12 @@ app.get("/solde", (req, res) => {
 });
 
 app.get("/validate-code", (req, res) => {
-    console.log("valid-code");
+  console.log("valid-code");
+  console.log(req.query);
   
-    renderFile(req, res, "./pages/valid-code.html");
-  });
+
+  renderFile(req, res, "./pages/valid-code.html");
+});
 
 app.use((req, res) => {
   res.status(404).send("Page non trouvée");

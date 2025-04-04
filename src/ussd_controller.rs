@@ -1,10 +1,13 @@
 use std::collections::HashMap;
 
-use reqwest::blocking::get;
+use reqwest::{
+    Error,
+    blocking::{Client, Response, get},
+};
 
 use crate::{
     adapter::adapter_trait::TagAdapter,
-    html::{BodyContent, HrefType, InputType},
+    html::{BodyContent, FormMethod, HrefType, InputType},
     renderer::renderer_trait::Renderer,
     validator_and_transformer::ValidatorAndTransformer,
 };
@@ -63,18 +66,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                                 return;
                             }
                         } else {
-                            match get(&next_link.href.url) {
-                                Ok(response) => {
-                                    if let Ok(html) = response.text() {
-                                        self.display(&html);
-                                    } else {
-                                        println!("Failed to read response text");
-                                    }
-                                }
-                                Err(err) => {
-                                    println!("Failed to fetch page: {:?}", err);
-                                }
-                            }
+                            self.handle_response(get(&next_link.href.url));
                             return;
                         }
                     }
@@ -88,12 +80,44 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                     };
 
                     if valid {
-                        println!("form data : {}", user_input);
+                        // println!("form data : {}", user_input);
+                        let url = &form.action;
+                        let param_name = &form.input.name;
+                        let client = Client::new();
+
+                        let response_result = match form.method {
+                            FormMethod::Get => {
+                                client.get(url).query(&[(param_name, &user_input)]).send()
+                            }
+                            FormMethod::Post => {
+                                client.post(url).form(&[(param_name, &user_input)]).send()
+                            }
+                        };
+                        self.handle_response(response_result);
                     } else {
-                        println!("invalid form dats");
+                        println!("Invalid form data");
                     }
                 }
                 BodyContent::Empty => {}
             });
+    }
+
+    fn handle_response(&self, response: Result<Response, Error>) {
+        match response {
+            Ok(response) => {
+                if response.status().is_success() {
+                    if let Ok(html) = response.text() {
+                        self.display(&html);
+                    } else {
+                        println!("Failed to read response text");
+                    }
+                } else {
+                    println!("Request failed with status: {}", response.status());
+                }
+            }
+            Err(err) => {
+                println!("Failed to fetch page: {:?}", err);
+            }
+        }
     }
 }
