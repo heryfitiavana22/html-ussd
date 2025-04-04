@@ -1,15 +1,10 @@
 use crate::html::HtmlUssdTree;
 
-pub trait Renderer {
-    fn render<F>(&self, tree: &HtmlUssdTree, on_input: F)
-    where
-        F: Fn(String);
+pub struct RenderParams<'a> {
+    pub tree: HtmlUssdTree,
+    pub on_input: Box<dyn Fn(String) + 'a>,
 }
 
-pub enum UserInput {
-    Navigation(usize),
-    FormData(String),
-    Exit,
-    Back,
-    Invalid,
+pub trait Renderer {
+    fn render<'a>(&self, params: RenderParams<'a>);
 }

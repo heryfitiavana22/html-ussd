@@ -1,16 +1,14 @@
 use rustyline::DefaultEditor;
 
-use crate::html::{BodyContent, HtmlUssdTree, InputType};
+use crate::html::{BodyContent, InputType};
 
-use super::renderer_trait::Renderer;
+use super::renderer_trait::{RenderParams, Renderer};
 
 pub struct TerminalRenderer;
 
 impl Renderer for TerminalRenderer {
-    fn render<F>(&self, tree: &HtmlUssdTree, on_input: F)
-    where
-        F: Fn(String),
-    {
+    fn render(&self, params: RenderParams) {
+        let RenderParams { tree, on_input } = params;
         println!("\n=== {} ===\n", tree.source.head.title.text);
         for paragraph in &tree.source.body.paragraphs {
             println!("{}", paragraph.text);

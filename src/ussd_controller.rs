@@ -8,7 +8,7 @@ use reqwest::{
 use crate::{
     adapter::adapter_trait::TagAdapter,
     html::{BodyContent, FormMethod, HrefType, InputType},
-    renderer::renderer_trait::Renderer,
+    renderer::renderer_trait::{RenderParams, Renderer},
     validator_and_transformer::ValidatorAndTransformer,
 };
 
@@ -41,8 +41,11 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             }
         };
 
-        self.renderer
-            .render(&tree, |user_input| match &tree.source.body.content {
+        let body_content = tree.source.body.content.clone();
+
+        self.renderer.render(RenderParams {
+            tree,
+            on_input: Box::new(move |user_input| match &body_content {
                 BodyContent::Links(links) => {
                     if let Ok(index) = user_input.parse::<usize>() {
                         if index == 0 || index > links.len() {
@@ -99,7 +102,8 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                     }
                 }
                 BodyContent::Empty => {}
-            });
+            }),
+        });
     }
 
     fn handle_response(&self, response: Result<Response, Error>) {
