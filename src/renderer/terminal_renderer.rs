@@ -8,7 +8,7 @@ pub struct TerminalRenderer;
 
 impl Renderer for TerminalRenderer {
     fn render(&self, params: RenderParams) {
-        let RenderParams { tree, on_input } = params;
+        let RenderParams { tree, on_input, is_main_page } = params;
         println!("\n=== {} ===\n", tree.source.head.title.text);
         for paragraph in &tree.source.body.paragraphs {
             println!("{}", paragraph.text);

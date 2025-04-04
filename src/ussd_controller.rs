@@ -20,12 +20,22 @@ pub struct UssdController<R: Renderer, T: TagAdapter> {
     pub renderer: R,
 }
 
+pub struct DisplayParams {
+    pub html: String,
+    pub is_main_page: bool,
+}
+
 impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
     pub fn run(&self) {
-        self.display(&self.main_page);
+        self.display(DisplayParams {
+            html: self.main_page.clone(),
+            is_main_page: true,
+        });
     }
-    pub fn display(&self, html: &str) {
-        let tags = match self.adapter.transform(html) {
+    pub fn display(&self, params: DisplayParams) {
+        let DisplayParams { html, is_main_page } = params;
+
+        let tags = match self.adapter.transform(html.as_str()) {
             Ok(tags) => tags,
             Err(e) => {
                 eprintln!("Adapter error : {:?}", e);
@@ -45,6 +55,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
 
         self.renderer.render(RenderParams {
             tree,
+            is_main_page,
             on_input: Box::new(move |user_input| match &body_content {
                 BodyContent::Links(links) => {
                     if let Ok(index) = user_input.parse::<usize>() {
@@ -62,7 +73,10 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                         if next_link.href.href_type == HrefType::File {
                             if let Some(next_html) = self.pages.get(&next_link.href.url) {
                                 // println!("navigate to : {}", next_link.href.url);
-                                self.display(&next_html);
+                                self.display(DisplayParams {
+                                    html: next_html.clone(),
+                                    is_main_page: false,
+                                });
                                 return;
                             } else {
                                 println!("page not found : {}", next_link.href.url);
@@ -111,7 +125,10 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             Ok(response) => {
                 if response.status().is_success() {
                     if let Ok(html) = response.text() {
-                        self.display(&html);
+                        self.display(DisplayParams {
+                            html: html.clone(),
+                            is_main_page: false,
+                        });
                     } else {
                         println!("Failed to read response text");
                     }
