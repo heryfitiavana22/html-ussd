@@ -3,9 +3,9 @@ use std::collections::HashMap;
 use reqwest::blocking::get;
 
 use crate::{
-    adapter::TagAdapter,
+    adapter::adapter_trait::TagAdapter,
     html::{BodyContent, HrefType, InputType},
-    renderer::Renderer,
+    renderer::renderer_trait::Renderer,
     validator_and_transformer::ValidatorAndTransformer,
 };
 

@@ -1,15 +1,12 @@
 use std::collections::HashMap;
 
 use html_ussd::{
-    dom_tree_adapter::DomTreeAdapter, terminal_renderer::TerminalRenderer,
-    ussd_controller::UssdController, validator_and_transformer::ValidatorAndTransformer,
+    adapter::dom_tree_adapter::DomTreeAdapter, renderer::terminal_renderer::TerminalRenderer, ussd_controller::UssdController, validator_and_transformer::ValidatorAndTransformer
 };
 
 pub mod adapter;
-pub mod dom_tree_adapter;
 pub mod html;
 pub mod renderer;
-pub mod terminal_renderer;
 pub mod ussd_controller;
 pub mod validator_and_transformer;
 

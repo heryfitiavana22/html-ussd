@@ -4,10 +4,9 @@ use parse_html::{
     dom::dom_tree::DomTree, lexer::tokenizer::Lexer, node::Node, parser::ast::Parser,
 };
 
-use crate::{
-    adapter::{AdapterError, TagAdapter},
-    html::{Tag, TagElement},
-};
+use crate::html::{Tag, TagElement};
+
+use super::adapter_trait::{AdapterError, TagAdapter};
 
 pub struct DomTreeAdapter;
 

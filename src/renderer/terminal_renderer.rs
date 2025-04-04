@@ -1,9 +1,8 @@
 use std::io::{self, Write};
 
-use crate::{
-    html::{BodyContent, HtmlUssdTree},
-    renderer::Renderer,
-};
+use crate::html::{BodyContent, HtmlUssdTree};
+
+use super::renderer_trait::Renderer;
 
 pub struct TerminalRenderer;
 
