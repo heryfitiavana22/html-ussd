@@ -7,5 +7,6 @@ pub struct RenderParams<'a> {
 }
 
 pub trait Renderer {
+    #[allow(clippy::needless_lifetimes)]
     fn render<'a>(&self, params: RenderParams<'a>);
 }

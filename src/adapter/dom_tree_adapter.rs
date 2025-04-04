@@ -11,6 +11,7 @@ use super::adapter_trait::{AdapterError, TagAdapter};
 pub struct DomTreeAdapter;
 
 impl DomTreeAdapter {
+    #[allow(clippy::only_used_in_recursion)]
     fn transform_nodes(&self, nodes: Vec<Node>) -> Result<Vec<TagElement>, AdapterError> {
         let mut tags: Vec<TagElement> = vec![];
         for node in nodes {

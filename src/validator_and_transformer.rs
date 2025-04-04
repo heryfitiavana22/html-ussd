@@ -13,7 +13,7 @@ impl ValidatorAndTransformer {
         let mut form_found = false;
         let mut link_found = false;
 
-        let option_html: Option<&TagElement> = tag_elements.get(0);
+        let option_html: Option<&TagElement> = tag_elements.first();
         if option_html.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Html));
         };
@@ -29,7 +29,7 @@ impl ValidatorAndTransformer {
         }
 
         // <head>
-        let option_head = html_element.children.get(0);
+        let option_head = html_element.children.first();
         if option_head.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Head));
         };
@@ -43,7 +43,7 @@ impl ValidatorAndTransformer {
                 head_element.children.clone(),
             ));
         }
-        let option_title = head_element.children.get(0);
+        let option_title = head_element.children.first();
         if option_title.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Title));
         };
@@ -57,22 +57,19 @@ impl ValidatorAndTransformer {
                 title_element.children.clone(),
             ));
         }
-        let option_child_title = title_element.children.get(0);
+        let option_child_title = title_element.children.first();
         if option_title.is_none() {
             return Err(ValidatorAndTransformerError::MissingTextInTitle);
         };
         let text_title_element = option_child_title.unwrap();
-        let title;
-        match &text_title_element.tag_name {
-            Tag::Text(content_text) => {
-                title = content_text.clone();
-            }
+        let title = match &text_title_element.tag_name {
+            Tag::Text(content_text) => content_text.clone(),
             _ => {
                 return Err(ValidatorAndTransformerError::UnexpectedTag(
                     text_title_element.tag_name.clone(),
                 ));
             }
-        }
+        };
 
         // <body>
         let option_body = html_element.children.get(1);
@@ -83,7 +80,7 @@ impl ValidatorAndTransformer {
         if body_element.tag_name != Tag::Body {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Body));
         }
-        if body_element.children.len() == 0 {
+        if body_element.children.is_empty() {
             return Err(ValidatorAndTransformerError::EmptyBody);
         }
 
@@ -136,7 +133,7 @@ impl ValidatorAndTransformer {
                     }
 
                     // <input />
-                    let option_input = child_body_element.children.get(0);
+                    let option_input = child_body_element.children.first();
                     if option_input.is_none() {
                         return Err(ValidatorAndTransformerError::FormMustHaveOneInput);
                     };
@@ -175,7 +172,7 @@ impl ValidatorAndTransformer {
                         return Err(ValidatorAndTransformerError::MissingInputName);
                     }
 
-                    if input_element.children.len() > 0 {
+                    if !input_element.children.is_empty() {
                         return Err(ValidatorAndTransformerError::UnexpectedChilds(
                             input_element.clone(),
                             input_element.children.clone(),
@@ -205,7 +202,7 @@ impl ValidatorAndTransformer {
                     }
                     let href = option_href.unwrap().1;
 
-                    let option_text = child_body_element.children.get(0);
+                    let option_text = child_body_element.children.first();
                     if option_text.is_none() {
                         return Err(ValidatorAndTransformerError::MissingTextInLink);
                     };
@@ -265,17 +262,14 @@ impl ValidatorAndTransformer {
     }
 
     fn get_text(&self, text_element: TagElement) -> Result<String, ValidatorAndTransformerError> {
-        let text_link;
-        match &text_element.tag_name {
-            Tag::Text(content_text) => {
-                text_link = content_text.clone();
-            }
+        let text_link = match &text_element.tag_name {
+            Tag::Text(content_text) => content_text.clone(),
             _ => {
                 return Err(ValidatorAndTransformerError::TextExpected(
                     text_element.tag_name.clone(),
                 ));
             }
-        }
+        };
         Ok(text_link)
     }
 
@@ -295,7 +289,7 @@ impl ValidatorAndTransformer {
                         text_element.children.clone(),
                     ));
                 }
-                if let Some(child_paragraph) = text_element.children.get(0) {
+                if let Some(child_paragraph) = text_element.children.first() {
                     text_link = self.get_text(child_paragraph.clone())? + "\n";
                 }
             }
