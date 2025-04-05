@@ -1,6 +1,9 @@
-use crate::html::{
-    Body, BodyContent, Form, FormMethod, Head, Href, HrefType, Html, HtmlUssdTree, Input,
-    InputType, Link, Paragraph, Tag, TagElement, Title,
+use crate::{
+    helper::is_server_url,
+    html::{
+        Body, BodyContent, Form, FormMethod, Head, Href, HrefType, Html, HtmlUssdTree, Input,
+        InputType, Link, Paragraph, Tag, TagElement, Title,
+    },
 };
 
 pub struct ValidatorAndTransformer;
@@ -216,10 +219,10 @@ impl ValidatorAndTransformer {
                     let text_element = option_text.unwrap();
                     let text_link = self.get_text(text_element.clone())?;
 
-                    let href_type = if href.ends_with(".html") {
-                        HrefType::File
-                    } else if href.starts_with("http://") || href.starts_with("https://") {
+                    let href_type = if is_server_url(href) {
                         HrefType::Server
+                    } else if !href.is_empty() {
+                        HrefType::File
                     } else {
                         return Err(ValidatorAndTransformerError::InvalidHref(href.to_string()));
                     };
