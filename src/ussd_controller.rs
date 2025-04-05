@@ -38,7 +38,7 @@ pub struct NewController<R: Renderer, T: TagAdapter> {
 pub struct DisplayParams {
     pub html: String,
     pub is_main_page: bool,
-    pub push_to_history: bool,
+    pub is_next_page: bool,
 }
 
 impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
@@ -57,27 +57,17 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         self.display(DisplayParams {
             html: self.main_page.clone(),
             is_main_page: true,
-            push_to_history: true,
+            is_next_page: true,
         });
     }
     pub fn display(&self, params: DisplayParams) {
         let DisplayParams {
             html,
             is_main_page,
-            push_to_history,
+            is_next_page,
         } = params;
 
-        if push_to_history {
-            let mut history = self.history.borrow_mut();
-            history.push(HistoryItem {
-                page: html.to_string(),
-                is_main_page,
-            });
-            // println!("push_to_history : {:?}", history);
-            // println!("push_to_history.len : {:?}", history.len());
-            drop(history);
-        }
-
+        
         let tags = match self.adapter.transform(html.as_str()) {
             Ok(tags) => tags,
             Err(e) => {
@@ -93,6 +83,17 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 return;
             }
         };
+        
+        if is_next_page && tree.source.history_enabled {
+            let mut history = self.history.borrow_mut();
+            history.push(HistoryItem {
+                page: html.to_string(),
+                is_main_page,
+            });
+            // println!("is_next_page : {:?}", history);
+            // println!("is_next_page.len : {:?}", history.len());
+            drop(history);
+        }
 
         let body_content = tree.source.body.content.clone();
 
@@ -130,7 +131,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                                     self.display(DisplayParams {
                                         html: next_html.clone(),
                                         is_main_page: false,
-                                        push_to_history: true,
+                                        is_next_page: true,
                                     });
                                     return;
                                 } else {
@@ -187,7 +188,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             self.display(DisplayParams {
                 html: previous.page,
                 is_main_page: previous.is_main_page,
-                push_to_history: true,
+                is_next_page: true,
             });
         } else {
             drop(history);
@@ -195,7 +196,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             self.display(DisplayParams {
                 html: self.main_page.clone(),
                 is_main_page: true,
-                push_to_history: true,
+                is_next_page: true,
             });
         }
     }
@@ -208,7 +209,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         self.display(DisplayParams {
             html: self.main_page.clone(),
             is_main_page: true,
-            push_to_history: true,
+            is_next_page: true,
         });
     }
 
@@ -220,7 +221,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                         self.display(DisplayParams {
                             html: html.clone(),
                             is_main_page: false,
-                            push_to_history: true,
+                            is_next_page: true,
                         });
                     } else {
                         println!("Failed to read response text");
