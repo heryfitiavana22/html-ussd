@@ -27,6 +27,10 @@ impl ValidatorAndTransformer {
                 html_element.children.clone(),
             ));
         }
+        let history_enabled = match html_element.attributes.get("history-enabled") {
+            Some(val) => val == "true",
+            None => true,
+        };
 
         // <head>
         let option_head = html_element.children.first();
@@ -242,6 +246,7 @@ impl ValidatorAndTransformer {
             HtmlUssdTree {
                 source: Html {
                     attributes: html_element.attributes.clone(),
+                    history_enabled,
                     head: Head {
                         attributes: head_element.attributes.clone(),
                         title: Title {

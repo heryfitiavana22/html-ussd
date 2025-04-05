@@ -30,6 +30,7 @@ pub struct Html {
     pub attributes: HashMap<String, String>,
     pub head: Head,
     pub body: Body,
+    pub history_enabled: bool,
 }
 
 #[derive(Debug, PartialEq, Clone)]
