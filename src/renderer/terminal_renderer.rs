@@ -1,6 +1,7 @@
 use rustyline::DefaultEditor;
 
 use crate::{
+    helper::muted_text,
     html::{BodyContent, InputType},
     i18n::t,
 };
@@ -69,7 +70,7 @@ impl Renderer for TerminalRenderer {
             }
         };
 
-        let readline = rl.readline(format!("\x1b[90m{} > \x1b[0m", input_hint).as_str());
+        let readline = rl.readline(muted_text(input_hint.as_str()).as_str());
         match readline {
             Ok(line) => {
                 on_input(line);

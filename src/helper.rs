@@ -1,6 +1,11 @@
 pub fn is_server_url(url: &str) -> bool {
     url.starts_with("http://") || url.starts_with("https://")
 }
+
+pub fn muted_text(input: &str) -> String {
+    format!("\x1b[90m{} > \x1b[0m", input)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
