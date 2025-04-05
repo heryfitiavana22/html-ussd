@@ -7,6 +7,7 @@ use reqwest::{
 
 use crate::{
     adapter::adapter_trait::TagAdapter,
+    helper::handle_result_response,
     html::{BodyContent, FormMethod, HrefType, InputType},
     renderer::renderer_trait::{RenderParams, Renderer},
     validator_and_transformer::ValidatorAndTransformer,
@@ -216,24 +217,16 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
     }
 
     fn handle_response(&self, response: Result<Response, Error>) {
-        match response {
-            Ok(response) => {
-                if response.status().is_success() {
-                    if let Ok(html) = response.text() {
-                        self.display(DisplayParams {
-                            html: html.clone(),
-                            is_main_page: false,
-                            is_next_page: true,
-                        });
-                    } else {
-                        println!("Failed to read response body");
-                    }
-                } else {
-                    println!("HTTP request failed with status: {}", response.status());
-                }
+        match handle_result_response(response) {
+            Ok(html) => {
+                self.display(DisplayParams {
+                    html: html.clone(),
+                    is_main_page: false,
+                    is_next_page: true,
+                });
             }
             Err(err) => {
-                println!("Failed to fetch remote page: {:?}", err);
+                println!("{:}", err);
             }
         }
     }

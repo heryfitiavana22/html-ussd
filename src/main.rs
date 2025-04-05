@@ -1,5 +1,6 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fs};
 
+use helper::fetch_html;
 use html_ussd::{
     adapter::dom_tree_adapter::DomTreeAdapter,
     i18n::{Lang, init_i18n},
@@ -7,6 +8,8 @@ use html_ussd::{
     ussd_controller::{NewController, UssdController},
     validator_and_transformer::ValidatorAndTransformer,
 };
+
+use clap::{Parser, Subcommand};
 
 pub mod adapter;
 pub mod helper;
@@ -16,53 +19,86 @@ pub mod renderer;
 pub mod ussd_controller;
 pub mod validator_and_transformer;
 
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Language to use (en, fr, mg)
+    #[arg(short, long, default_value = "en")]
+    lang: String,
+
+    #[command(subcommand)]
+    mode: StartMode,
+}
+
+#[derive(Subcommand)]
+enum StartMode {
+    /// Start with a URL
+    Url {
+        /// The starting URL
+        #[arg()]
+        url: String,
+    },
+    /// Start with local files
+    Files {
+        /// The name of the main file (entry point)
+        #[arg(short, long)]
+        main: String,
+
+        /// List of file names (e.g. page2.html page3.html)
+        #[arg()]
+        files: Vec<String>,
+    },
+}
+
 fn main() {
-    init_i18n(Lang::En);
-    // println!("Hello, world!");
-    let main_page = r#"
-    <html lang="en">
-    <head>
-        <title>Titre main page</title>
-    </head>
-    <body id="container">
-        bievenue
-        <a href="http://localhost:8888/main-page" id="l1">server</a>
-        <a href="page2.html" id="l1">page 2</a>
-        <a href="page3.html">page 3</a>
-    </body>
-    </html>"#;
+    let cli = Cli::parse();
 
-    let page2 = r#"
-    <html lang="en">
-    <head>
-        <title>Titre page 2</title>
-    </head>
-    <body id="container">
-        oui miova e
-        <a href="page3.html">link2</a>
-    </body>
-    </html>"#;
+    // Langue
+    let lang = match cli.lang.as_str() {
+        "fr" => Lang::Fr,
+        "mg" => Lang::Mg,
+        "en" => Lang::En,
+        _ => {
+            eprintln!("Invalid language. Supported languages: fr, mg, en");
+            return;
+        }
+    };
+    init_i18n(lang);
 
-    let page3 = r#"
-    <html lang="en">
-    <head>
-        <title>Titre page 3</title>
-    </head>
-    <body id="container">
-        farany
-    </body>
-    </html>"#;
+    let mut pages = HashMap::new();
+    let main_page;
 
-    let mut pages: HashMap<String, String> = HashMap::new();
-    pages.insert("page2.html".to_string(), page2.to_string());
-    pages.insert("page3.html".to_string(), page3.to_string());
+    match cli.mode {
+        StartMode::Url { url } => match fetch_html(url.as_str()) {
+            Ok(html) => {
+                main_page = html;
+            }
+            Err(err) => {
+                eprintln!("{}", err);
+                return;
+            }
+        },
 
-    let ussd_controller = UssdController::new(NewController {
-        main_page: main_page.to_string(),
+        StartMode::Files { main, files } => {
+            for file in &files {
+                if let Ok(content) = fs::read_to_string(file) {
+                    pages.insert(file.to_string(), content);
+                } else {
+                    eprintln!("Failed to read file: {}", file);
+                    return;
+                }
+            }
+
+            main_page = fs::read_to_string(&main).expect("Cannot read main file");
+        }
+    }
+
+    let controller = UssdController::new(NewController {
+        main_page,
         pages,
         adapter: DomTreeAdapter,
         renderer: TerminalRenderer,
         validator: ValidatorAndTransformer,
     });
-    ussd_controller.run();
+    controller.run();
 }
