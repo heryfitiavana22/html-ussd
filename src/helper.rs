@@ -12,41 +12,41 @@ mod tests {
 
     #[test]
     fn test_is_server_url_with_http() {
-        assert!(is_server_url("http://example.com"));
+        assert_eq!(is_server_url("http://example.com"), true);
     }
 
     #[test]
     fn test_is_server_url_with_https() {
-        assert!(is_server_url("https://example.com"));
+        assert_eq!(is_server_url("https://example.com"), true);
     }
 
     #[test]
     fn test_is_server_url_with_no_protocol() {
-        assert!(!is_server_url("example.com"));
+        assert_eq!(is_server_url("example.com"), false);
     }
 
     #[test]
     fn test_is_server_url_with_ftp_protocol() {
-        assert!(!is_server_url("ftp://example.com"));
+        assert_eq!(is_server_url("ftp://example.com"), false);
     }
 
     #[test]
     fn test_is_server_url_with_empty_string() {
-        assert!(!is_server_url(""));
+        assert_eq!(is_server_url(""), false);
     }
 
     #[test]
     fn test_is_server_url_with_whitespace() {
-        assert!(!is_server_url("   "));
+        assert_eq!(is_server_url("   "), false);
     }
 
     #[test]
     fn test_is_server_url_with_partial_http() {
-        assert!(!is_server_url("http:/example.com"));
+        assert_eq!(is_server_url("http:/example.com"), false);
     }
 
     #[test]
     fn test_is_server_url_with_partial_https() {
-        assert!(!is_server_url("https:/example.com"));
+        assert_eq!(is_server_url("https:/example.com"), false);
     }
 }
