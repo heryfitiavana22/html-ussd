@@ -440,6 +440,46 @@ fn missing_input_name() {
 }
 
 #[test]
+fn invalid_input_child() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![tag_element(
+                    Tag::Form,
+                    &[("method", "get"), ("action", "/")],
+                    vec![tag_element(
+                        Tag::Input,
+                        &[("type", "text"), ("placeholder", "exam"), ("name", "examp")],
+                        vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                    )],
+                )],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::UnexpectedChilds(_, _))
+    ));
+}
+
+#[test]
 fn link_without_href() {
     let html_tree = vec![tag_element(
         Tag::Html,
