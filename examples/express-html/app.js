@@ -56,6 +56,21 @@ app.post("/handle-form-post", (req, res) => {
   res.render("handle-form-post", { code });
 });
 
+app.get("/not-in-history", (req, res) => {
+  console.log("not-in-history");
+  res.render("not-in-history");
+});
+
+app.get("/after-not-in-history", (req, res) => {
+  console.log("after-not-in-history");
+  res.render("after-not-in-history");
+});
+
+app.get("/end", (req, res) => {
+  console.log("end");
+  res.render("end");
+});
+
 app.use((req, res) => {
   res.status(404).send("Page non trouvée");
 });
