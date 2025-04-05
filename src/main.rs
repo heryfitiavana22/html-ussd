@@ -2,19 +2,22 @@ use std::collections::HashMap;
 
 use html_ussd::{
     adapter::dom_tree_adapter::DomTreeAdapter,
+    i18n::{Lang, init_i18n},
     renderer::terminal_renderer::TerminalRenderer,
     ussd_controller::{NewController, UssdController},
     validator_and_transformer::ValidatorAndTransformer,
 };
 
 pub mod adapter;
+pub mod helper;
 pub mod html;
+pub mod i18n;
 pub mod renderer;
 pub mod ussd_controller;
 pub mod validator_and_transformer;
-pub mod helper;
 
 fn main() {
+    init_i18n(Lang::En);
     // println!("Hello, world!");
     let main_page = r#"
     <html lang="en">

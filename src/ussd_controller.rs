@@ -70,11 +70,10 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             is_next_page,
         } = params;
 
-        
         let tags = match self.adapter.transform(html.as_str()) {
             Ok(tags) => tags,
             Err(e) => {
-                eprintln!("Adapter error : {:?}", e);
+                eprintln!("Adapter error: {:?}", e);
                 return;
             }
         };
@@ -82,11 +81,11 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         let tree = match self.validator.validate(tags) {
             Ok(tree) => tree,
             Err(e) => {
-                eprintln!("Validation error : {:?}", e);
+                eprintln!("Validation error: {:?}", e);
                 return;
             }
         };
-        
+
         if is_next_page && tree.source.history_enabled {
             let mut history = self.history.borrow_mut();
             history.push(HistoryItem {
@@ -118,12 +117,12 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                     BodyContent::Links(links) => {
                         if let Ok(index) = user_input.parse::<usize>() {
                             if index == 0 || index > links.len() {
-                                println!("invalid input links, index out of bounds");
+                                println!("Invalid input: selected link index is out of bounds");
                                 return;
                             }
                             let option_next_link = links.get(index - 1);
                             if option_next_link.is_none() {
-                                println!("invalid input links, invalid index");
+                                println!("Invalid input: invalid link index");
                                 return;
                             }
                             let next_link = option_next_link.unwrap();
@@ -138,7 +137,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                                     });
                                     return;
                                 } else {
-                                    println!("page not found : {}", next_link.href.url);
+                                    println!("Page not found: {}", next_link.href.url);
                                     return;
                                 }
                             } else {
@@ -147,7 +146,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             }
                         }
 
-                        println!("invalid input links expected number");
+                        println!("Invalid input: expected a numeric value");
                     }
                     BodyContent::Form(form) => {
                         let valid = match form.input.input_type {
@@ -171,7 +170,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             };
                             self.handle_response(response_result);
                         } else {
-                            println!("Invalid form data");
+                            println!("Invalid form input: please enter a valid value");
                         }
                     }
                     BodyContent::Empty => {}
@@ -227,14 +226,14 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             is_next_page: true,
                         });
                     } else {
-                        println!("Failed to read response text");
+                        println!("Failed to read response body");
                     }
                 } else {
-                    println!("Request failed with status: {}", response.status());
+                    println!("HTTP request failed with status: {}", response.status());
                 }
             }
             Err(err) => {
-                println!("Failed to fetch page: {:?}", err);
+                println!("Failed to fetch remote page: {:?}", err);
             }
         }
     }

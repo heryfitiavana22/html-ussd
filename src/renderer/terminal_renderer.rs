@@ -1,6 +1,9 @@
 use rustyline::DefaultEditor;
 
-use crate::html::{BodyContent, InputType};
+use crate::{
+    html::{BodyContent, InputType},
+    i18n::t,
+};
 
 use super::renderer_trait::{RenderParams, Renderer};
 
@@ -44,8 +47,8 @@ impl Renderer for TerminalRenderer {
         };
         if !is_main_page {
             println!("----");
-            println!("0. Retour");
-            println!("00. Accueil");
+            println!("0. {}", t("back"));
+            println!("00. {}", t("home"));
         }
         let mut rl = match DefaultEditor::new() {
             Ok(editor) => editor,
@@ -59,7 +62,7 @@ impl Renderer for TerminalRenderer {
             Ok(line) => {
                 on_input(line);
             }
-            Err(_) => println!("No input"),
+            Err(_) => println!("{}", t("no_input")),
         }
     }
 }
