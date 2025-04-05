@@ -51,7 +51,7 @@ impl Renderer for TerminalRenderer {
                 is_empty = true;
             }
         }
-        
+
         println!("\n------------------------");
         if is_empty {
             return;
@@ -69,7 +69,7 @@ impl Renderer for TerminalRenderer {
             }
         };
 
-        let readline = rl.readline(format!("{} > ", input_hint).as_str());
+        let readline = rl.readline(format!("\x1b[90m{} > \x1b[0m", input_hint).as_str());
         match readline {
             Ok(line) => {
                 on_input(line);
