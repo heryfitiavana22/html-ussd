@@ -116,7 +116,11 @@ fn form_and_link_together() {
                         &[("method", "get"), ("action", "/")],
                         vec![tag_element(
                             Tag::Input,
-                            &[("type", "text"), ("placeholder", "text")],
+                            &[
+                                ("type", "text"),
+                                ("placeholder", "text"),
+                                ("name", "exampe"),
+                            ],
                             vec![],
                         )],
                     ),
@@ -468,5 +472,44 @@ fn link_with_invalid_child() {
     assert!(matches!(
         result,
         Err(ValidatorAndTransformerError::TextExpected(_))
+    ));
+}
+
+#[test]
+fn text_after_link_or_form() {
+    let html_tree = vec![tag_element(
+        Tag::Html,
+        &[],
+        vec![
+            tag_element(
+                Tag::Head,
+                &[],
+                vec![tag_element(
+                    Tag::Title,
+                    &[],
+                    vec![tag_element(Tag::Text("Title".to_string()), &[], vec![])],
+                )],
+            ),
+            tag_element(
+                Tag::Body,
+                &[],
+                vec![
+                    tag_element(
+                        Tag::Link,
+                        &[("href", "test.html")],
+                        vec![tag_element(Tag::Text("ok".to_string()), &[], vec![])],
+                    ),
+                    tag_element(Tag::Text("ok".to_string()), &[], vec![]),
+                ],
+            ),
+        ],
+    )];
+
+    let validator = ValidatorAndTransformer;
+    let result = validator.validate(html_tree);
+
+    assert!(matches!(
+        result,
+        Err(ValidatorAndTransformerError::TextMustBeBeforeLinkOrForm)
     ));
 }

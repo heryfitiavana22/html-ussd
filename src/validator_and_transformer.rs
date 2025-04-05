@@ -10,9 +10,6 @@ impl ValidatorAndTransformer {
         &self,
         tag_elements: Vec<TagElement>,
     ) -> Result<HtmlUssdTree, ValidatorAndTransformerError> {
-        let mut form_found = false;
-        let mut link_found = false;
-
         let option_html: Option<&TagElement> = tag_elements.first();
         if option_html.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Html));
@@ -91,10 +88,16 @@ impl ValidatorAndTransformer {
         let mut body_paragraphs: Vec<Paragraph> = vec![];
         let mut body_content: BodyContent = BodyContent::Empty;
         let mut links: Vec<Link> = vec![];
+        let mut form_found = false;
+        let mut link_found = false;
 
         for child_body_element in &body_element.children {
             match &child_body_element.tag_name {
                 Tag::Text(_) | Tag::P => {
+                    if form_found || link_found {
+                        return Err(ValidatorAndTransformerError::TextMustBeBeforeLinkOrForm);
+                    }
+
                     let text_link = self.get_text_with_paragraph(child_body_element.clone())?;
                     body_paragraphs.push(Paragraph {
                         text: text_link,
@@ -329,4 +332,5 @@ pub enum ValidatorAndTransformerError {
     MissingTextInLink,
     MissingTextInTitle,
     InvalidHref(String),
+    TextMustBeBeforeLinkOrForm,
 }
