@@ -141,6 +141,10 @@ impl ValidatorAndTransformer {
                     if option_action_attr.is_none() {
                         return Err(ValidatorAndTransformerError::MissingFormAction);
                     }
+                    let form_action = option_action_attr.unwrap().1;
+                    if !is_server_url(form_action) {
+                        return Err(ValidatorAndTransformerError::FormActionMustBeServerUrl);
+                    }
 
                     // <input />
                     let option_input = child_body_element.children.first();
@@ -325,6 +329,7 @@ pub enum ValidatorAndTransformerError {
     InvalidInputType(String),
     InvalidFormMethod(String),
     MissingFormAction,
+    FormActionMustBeServerUrl,
     MissingFormMethod,
     EmptyBody,
     MissingInputType,
