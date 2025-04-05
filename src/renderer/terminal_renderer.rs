@@ -16,7 +16,16 @@ impl Renderer for TerminalRenderer {
             on_input,
             is_main_page,
         } = params;
-        println!("\n=== {} ===\n", tree.source.head.title.text);
+
+        let raw_title = &tree.source.head.title.text;
+        let width = raw_title.chars().count() + 4;
+        let border = format!("+{:=^width$}+", "", width = width);
+        let centered_title = format!("|{:^width$}|", raw_title, width = width);
+
+        println!("\n{}", border);
+        println!("{}", centered_title);
+        println!("{}\n", border);
+
         for paragraph in &tree.source.body.paragraphs {
             println!("{}", paragraph.text);
         }
@@ -42,21 +51,24 @@ impl Renderer for TerminalRenderer {
                 is_empty = true;
             }
         }
+        
+        println!("\n------------------------");
         if is_empty {
             return;
         };
         if !is_main_page {
-            println!("----");
             println!("0. {}", t("back"));
             println!("00. {}", t("home"));
         }
+
         let mut rl = match DefaultEditor::new() {
             Ok(editor) => editor,
             Err(err) => {
-                eprintln!("Failed to create editor: {:?}", err);
+                eprintln!("Failed to create input editor: {:?}", err);
                 return;
             }
         };
+
         let readline = rl.readline(format!("{} > ", input_hint).as_str());
         match readline {
             Ok(line) => {
