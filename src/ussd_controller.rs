@@ -12,6 +12,9 @@ use crate::{
     validator_and_transformer::ValidatorAndTransformer,
 };
 
+const BACK_KEY: &str = "0";
+const HOME_KEY: &str = "00";
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct HistoryItem {
     pub page: String,
@@ -101,12 +104,12 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             tree,
             is_main_page,
             on_input: Box::new(move |user_input| {
-                if user_input == "0" && !is_main_page {
+                if user_input == BACK_KEY && !is_main_page {
                     self.go_back();
                     return;
                 }
 
-                if user_input == "00" && !is_main_page {
+                if user_input == HOME_KEY && !is_main_page {
                     self.go_to_main_page();
                     return;
                 }
