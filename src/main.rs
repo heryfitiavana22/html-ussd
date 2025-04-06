@@ -1,6 +1,6 @@
 use std::{collections::HashMap, path::PathBuf};
 
-use helper::{fetch_html, load_file};
+use helper::{fetch_html, is_server_url, load_file};
 use html_ussd::{
     adapter::dom_tree_adapter::DomTreeAdapter,
     i18n::{Lang, init_i18n},
@@ -9,7 +9,7 @@ use html_ussd::{
     validator_and_transformer::ValidatorAndTransformer,
 };
 
-use clap::{Parser, Subcommand};
+use clap::Parser;
 
 pub mod adapter;
 pub mod helper;
@@ -27,27 +27,12 @@ struct Cli {
     lang: String,
 
     /// Disable cache when loading files from local or server
-    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    #[arg(long, action = clap::ArgAction::SetTrue)]
     no_cache: bool,
 
-    #[command(subcommand)]
-    mode: StartMode,
-}
-
-#[derive(Subcommand)]
-enum StartMode {
-    /// Start with a URL
-    Url {
-        /// The starting URL
-        #[arg()]
-        url: String,
-    },
-    /// Start with local files
-    Files {
-        /// The name of the main file (entry point)
-        #[arg(short, long)]
-        main: String,
-    },
+    /// The starting URL or the name of the main file (eg: http://localhost:8888 or index.html)
+    #[arg(short, long)]
+    main: String,
 }
 
 fn main() {
@@ -68,8 +53,9 @@ fn main() {
     let main_page;
     let base_dir;
 
-    match cli.mode {
-        StartMode::Url { url } => match fetch_html(url.as_str()) {
+    let main_str = cli.main.as_str();
+    if is_server_url(main_str) {
+        match fetch_html(main_str) {
             Ok(html) => {
                 main_page = html;
                 base_dir = None;
@@ -78,23 +64,22 @@ fn main() {
                 eprintln!("{}", err);
                 return;
             }
-        },
-
-        StartMode::Files { main } => {
-            main_page = match load_file(&main) {
-                Ok(content) => content,
-                Err(err) => {
-                    eprintln!("{}", err);
-                    return;
-                }
-            };
-
-            base_dir = PathBuf::from(&main)
-                .parent()
-                .map(|p| p.to_path_buf())
-                .filter(|p| !p.as_os_str().is_empty());
         }
+    } else {
+        main_page = match load_file(main_str) {
+            Ok(content) => content,
+            Err(err) => {
+                eprintln!("{}", err);
+                return;
+            }
+        };
+
+        base_dir = PathBuf::from(main_str)
+            .parent()
+            .map(|p| p.to_path_buf())
+            .filter(|p| !p.as_os_str().is_empty());
     }
+
     // println!("Base dir: {:?}", base_dir);
 
     let controller = UssdController::new(NewController {
