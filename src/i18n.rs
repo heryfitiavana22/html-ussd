@@ -18,18 +18,21 @@ impl I18n {
                 "back" => "Back".to_string(),
                 "home" => "Home".to_string(),
                 "no_input" => "No input".to_string(),
+                "good_bye" => "Good bye".to_string(),
                 _ => key.to_string(),
             },
             Lang::Fr => match key {
                 "back" => "Retour".to_string(),
                 "home" => "Accueil".to_string(),
                 "no_input" => "Aucune saisie".to_string(),
+                "good_bye" => "Au revoir".to_string(),
                 _ => key.to_string(),
             },
             Lang::Mg => match key {
                 "back" => "Hiverina".to_string(),
                 "home" => "Fandraisana".to_string(),
                 "no_input" => "Tsy misy".to_string(),
+                "good_bye" => "Veloma".to_string(),
                 _ => key.to_string(),
             },
         }

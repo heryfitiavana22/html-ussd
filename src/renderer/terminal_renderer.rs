@@ -75,7 +75,7 @@ impl Renderer for TerminalRenderer {
             Ok(line) => {
                 on_input(line);
             }
-            Err(_) => println!("{}", t("no_input")),
+            Err(_) => println!("{}", t("good_bye")),
         }
     }
 
