@@ -1,6 +1,6 @@
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, path::PathBuf};
 
-use helper::fetch_html;
+use helper::{fetch_html, load_file};
 use html_ussd::{
     adapter::dom_tree_adapter::DomTreeAdapter,
     i18n::{Lang, init_i18n},
@@ -43,10 +43,6 @@ enum StartMode {
         /// The name of the main file (entry point)
         #[arg(short, long)]
         main: String,
-
-        /// List of file names (e.g. page2.html page3.html)
-        #[arg()]
-        files: Vec<String>,
     },
 }
 
@@ -65,13 +61,14 @@ fn main() {
     };
     init_i18n(lang);
 
-    let mut pages = HashMap::new();
     let main_page;
+    let base_dir;
 
     match cli.mode {
         StartMode::Url { url } => match fetch_html(url.as_str()) {
             Ok(html) => {
                 main_page = html;
+                base_dir = None;
             }
             Err(err) => {
                 eprintln!("{}", err);
@@ -79,26 +76,30 @@ fn main() {
             }
         },
 
-        StartMode::Files { main, files } => {
-            for file in &files {
-                if let Ok(content) = fs::read_to_string(file) {
-                    pages.insert(file.to_string(), content);
-                } else {
-                    eprintln!("Failed to read file: {}", file);
+        StartMode::Files { main } => {
+            main_page = match load_file(&main) {
+                Ok(content) => content,
+                Err(err) => {
+                    eprintln!("{}", err);
                     return;
                 }
-            }
+            };
 
-            main_page = fs::read_to_string(&main).expect("Cannot read main file");
+            base_dir = PathBuf::from(&main)
+                .parent()
+                .map(|p| p.to_path_buf())
+                .filter(|p| !p.as_os_str().is_empty());
         }
     }
+    // println!("Base dir: {:?}", base_dir);
 
     let controller = UssdController::new(NewController {
         main_page,
-        pages,
+        pages: HashMap::new(),
         adapter: DomTreeAdapter,
         renderer: TerminalRenderer,
         validator: ValidatorAndTransformer,
+        base_dir,
     });
     controller.run();
 }

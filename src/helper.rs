@@ -17,6 +17,14 @@ pub fn fetch_html(url: &str) -> Result<String, String> {
     handle_result_response(response)
 }
 
+pub fn load_file(file_path: &str) -> Result<String, String> {
+    let content = std::fs::read_to_string(file_path);
+    match content {
+        Ok(content) => Ok(content),
+        Err(err) => Err(format!("Error reading file {}: {}", file_path, err)),
+    }
+}
+
 pub fn handle_result_response(response: Result<Response, Error>) -> Result<String, String> {
     match response {
         Ok(response) => {

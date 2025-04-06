@@ -1,4 +1,4 @@
-use std::{cell::RefCell, collections::HashMap};
+use std::{cell::RefCell, collections::HashMap, path::PathBuf};
 
 use reqwest::{
     Error,
@@ -7,7 +7,7 @@ use reqwest::{
 
 use crate::{
     adapter::adapter_trait::TagAdapter,
-    helper::handle_result_response,
+    helper::{handle_result_response, load_file},
     html::{BodyContent, FormMethod, HrefType, InputType},
     renderer::renderer_trait::{RenderParams, Renderer},
     validator_and_transformer::ValidatorAndTransformer,
@@ -29,6 +29,7 @@ pub struct UssdController<R: Renderer, T: TagAdapter> {
     pub validator: ValidatorAndTransformer,
     pub renderer: R,
     pub history: RefCell<Vec<HistoryItem>>,
+    pub base_dir: Option<PathBuf>,
 }
 
 pub struct NewController<R: Renderer, T: TagAdapter> {
@@ -37,6 +38,7 @@ pub struct NewController<R: Renderer, T: TagAdapter> {
     pub adapter: T,
     pub validator: ValidatorAndTransformer,
     pub renderer: R,
+    pub base_dir: Option<PathBuf>,
 }
 
 pub struct DisplayParams {
@@ -54,6 +56,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             validator: params.validator,
             renderer: params.renderer,
             history: RefCell::new(vec![]),
+            base_dir: params.base_dir,
         }
     }
 
@@ -129,17 +132,19 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             let next_link = option_next_link.unwrap();
 
                             if next_link.href.href_type == HrefType::File {
-                                if let Some(next_html) = self.pages.get(&next_link.href.url) {
-                                    // println!("navigate to : {}", next_link.href.url);
-                                    self.display(DisplayParams {
-                                        html: next_html.clone(),
-                                        is_main_page: false,
-                                        is_next_page: true,
-                                    });
-                                    return;
-                                } else {
-                                    println!("Page not found: {}", next_link.href.url);
-                                    return;
+                                match self.get_file(&next_link.href.url) {
+                                    Ok(next_html) => {
+                                        self.display(DisplayParams {
+                                            html: next_html.clone(),
+                                            is_main_page: false,
+                                            is_next_page: true,
+                                        });
+                                        return;
+                                    }
+                                    Err(err) => {
+                                        println!("{}", err);
+                                        return;
+                                    }
                                 }
                             } else {
                                 self.handle_response(get(&next_link.href.url));
@@ -229,5 +234,17 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 println!("{:}", err);
             }
         }
+    }
+
+    pub fn get_file(&self, file_path: &str) -> Result<String, String> {
+        if let Some(next_html) = self.pages.get(file_path) {
+            return Ok(next_html.to_string());
+        }
+        let final_path = if let Some(base) = &self.base_dir {
+            base.join(file_path)
+        } else {
+            PathBuf::from(file_path)
+        };
+        load_file(final_path.to_str().unwrap())
     }
 }
