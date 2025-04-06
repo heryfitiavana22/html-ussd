@@ -26,11 +26,11 @@ struct Cli {
     #[arg(short, long, default_value = "en")]
     lang: String,
 
-    /// Disable cache when loading files from local or server
+    /// Disable caching when loading files from disk or server.
     #[arg(long, action = clap::ArgAction::SetTrue)]
     no_cache: bool,
 
-    /// The starting URL or the name of the main file (eg: http://localhost:8888 or index.html)
+    /// The starting URL or main file name (e.g. http://localhost:8888 or index.html)
     #[arg(short, long)]
     main: String,
 }
@@ -38,7 +38,6 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    // Langue
     let lang = match cli.lang.as_str() {
         "fr" => Lang::Fr,
         "mg" => Lang::Mg,
