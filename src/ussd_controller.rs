@@ -23,13 +23,14 @@ pub struct HistoryItem {
 }
 
 pub struct UssdController<R: Renderer, T: TagAdapter> {
-    pub cache_pages: HashMap<String, String>,
+    pub cache_pages: RefCell<HashMap<String, String>>,
     pub main_page: String,
     pub adapter: T,
     pub validator: ValidatorAndTransformer,
     pub renderer: R,
     pub history: RefCell<Vec<HistoryItem>>,
     pub base_dir: Option<PathBuf>,
+    pub use_cache: bool,
 }
 
 pub struct NewController<R: Renderer, T: TagAdapter> {
@@ -39,6 +40,7 @@ pub struct NewController<R: Renderer, T: TagAdapter> {
     pub validator: ValidatorAndTransformer,
     pub renderer: R,
     pub base_dir: Option<PathBuf>,
+    pub use_cache: bool,
 }
 
 pub struct DisplayParams {
@@ -50,13 +52,14 @@ pub struct DisplayParams {
 impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
     pub fn new(params: NewController<R, T>) -> Self {
         Self {
-            cache_pages: params.cache_pages,
+            cache_pages: RefCell::new(params.cache_pages),
             main_page: params.main_page,
             adapter: params.adapter,
             validator: params.validator,
             renderer: params.renderer,
             history: RefCell::new(vec![]),
             base_dir: params.base_dir,
+            use_cache: params.use_cache,
         }
     }
 
@@ -224,19 +227,47 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         }
     }
 
+    pub fn get_from_cache(&self, key: &str) -> Option<String> {
+        let caches = self.cache_pages.borrow();
+        let html = caches.get(key);
+        html.cloned()
+    }
+
+    pub fn set_to_cache(&self, key: String, value: String) {
+        let mut caches = self.cache_pages.borrow_mut();
+        caches.insert(key, value);
+        drop(caches);
+    }
+
     pub fn display_from_server_url(&self, url: &str) {
-        if let Some(cached_html) = self.cache_pages.get(url) {
+        if let Some(cached_html) = self.get_from_cache(url) {
+            println!("from cache in display_from_server_url");
+
             self.display(DisplayParams {
                 html: cached_html.clone(),
                 is_main_page: false,
                 is_next_page: true,
             });
         }
-        self.handle_response(get(url))
+        match handle_result_response(get(url)) {
+            Ok(html) => {
+                self.set_to_cache(url.to_string(), html.clone());
+                self.display(DisplayParams {
+                    html,
+                    is_main_page: false,
+                    is_next_page: true,
+                });
+            }
+            Err(err) => {
+                println!("{:}", err);
+            }
+        }
     }
 
     pub fn display_from_file(&self, file_path: &str) {
-        if let Some(cached_html) = self.cache_pages.get(file_path) {
+        if let Some(cached_html) = self.get_from_cache(file_path) {
+            println!("from cache in display_from_file");
+
             self.display(DisplayParams {
                 html: cached_html.clone(),
                 is_main_page: false,
@@ -245,6 +276,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         }
         match self.get_file(file_path) {
             Ok(html) => {
+                self.set_to_cache(file_path.to_string(), html.clone());
                 self.display(DisplayParams {
                     html,
                     is_main_page: false,

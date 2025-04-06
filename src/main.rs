@@ -26,6 +26,10 @@ struct Cli {
     #[arg(short, long, default_value = "en")]
     lang: String,
 
+    /// Disable cache when loading files from local or server
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    no_cache: bool,
+
     #[command(subcommand)]
     mode: StartMode,
 }
@@ -100,6 +104,7 @@ fn main() {
         renderer: TerminalRenderer,
         validator: ValidatorAndTransformer,
         base_dir,
+        use_cache: !cli.no_cache,
     });
     controller.run();
 }
