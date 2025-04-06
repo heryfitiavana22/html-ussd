@@ -30,20 +30,18 @@ pub fn handle_result_response(response: Result<Response, Error>) -> Result<Strin
         Ok(response) => {
             if response.status().is_success() {
                 if let Ok(html) = response.text() {
-                    return Ok(html);
+                    Ok(html)
                 } else {
-                    return Err(format!("Failed to read response body"));
+                    Err("Failed to read response body".to_string())
                 }
             } else {
-                return Err(format!(
+                Err(format!(
                     "HTTP request failed with status: {}",
                     response.status()
-                ));
+                ))
             }
         }
-        Err(err) => {
-            return Err(format!("Failed to fetch remote page: {:?}", err));
-        }
+        Err(err) => Err(format!("Failed to fetch remote page: {:?}", err)),
     }
 }
 

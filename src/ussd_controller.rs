@@ -126,15 +126,16 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                     BodyContent::Links(links) => {
                         if let Ok(index) = user_input.parse::<usize>() {
                             if index == 0 || index > links.len() {
-                                self.renderer.render_text(format!(
+                                self.renderer.render_text(
                                     "Invalid input: selected link index is out of bounds"
-                                ));
+                                        .to_string(),
+                                );
                                 return;
                             }
                             let option_next_link = links.get(index - 1);
                             if option_next_link.is_none() {
                                 self.renderer
-                                    .render_text(format!("Invalid input: invalid link index"));
+                                    .render_text("Invalid input: invalid link index".to_string());
                                 return;
                             }
                             let next_link = option_next_link.unwrap();
@@ -149,7 +150,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                         }
 
                         self.renderer
-                            .render_text(format!("Invalid input: expected a numeric value"));
+                            .render_text("Invalid input: expected a numeric value".to_string());
                     }
                     BodyContent::Form(form) => {
                         let valid = match form.input.input_type {
@@ -173,9 +174,9 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             };
                             self.handle_response(response_result);
                         } else {
-                            self.renderer.render_text(format!(
-                                "Invalid form input: please enter a valid value"
-                            ));
+                            self.renderer.render_text(
+                                "Invalid form input: please enter a valid value".to_string(),
+                            );
                         }
                     }
                     BodyContent::Empty => {}
@@ -230,7 +231,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 });
             }
             Err(err) => {
-                self.renderer.render_text(format!("{:}", err));
+                self.renderer.render_text(err);
             }
         }
     }
@@ -268,7 +269,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 });
             }
             Err(err) => {
-                self.renderer.render_text(format!("{:}", err));
+                self.renderer.render_text(err);
             }
         }
     }
@@ -294,7 +295,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 });
             }
             Err(err) => {
-                self.renderer.render_text(format!("{}", err));
+                self.renderer.render_text(err);
             }
         }
     }
