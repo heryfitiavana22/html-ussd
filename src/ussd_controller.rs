@@ -204,7 +204,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         let mut history = self.history.borrow_mut();
         history.clear();
         drop(history);
-        
+
         self.display(DisplayParams {
             html: self.main_page.clone(),
             is_main_page: true,
@@ -241,7 +241,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
 
     pub fn display_from_server_url(&self, url: &str) {
         if let Some(cached_html) = self.get_from_cache(url) {
-            println!("from cache in display_from_server_url");
+            // println!("from cache in display_from_server_url");
 
             self.display(DisplayParams {
                 html: cached_html.clone(),
@@ -267,7 +267,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
 
     pub fn display_from_file(&self, file_path: &str) {
         if let Some(cached_html) = self.get_from_cache(file_path) {
-            println!("from cache in display_from_file");
+            // println!("from cache in display_from_file");
 
             self.display(DisplayParams {
                 html: cached_html.clone(),
