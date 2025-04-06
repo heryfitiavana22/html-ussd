@@ -204,7 +204,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         let mut history = self.history.borrow_mut();
         history.clear();
         drop(history);
-
+        
         self.display(DisplayParams {
             html: self.main_page.clone(),
             is_main_page: true,
@@ -248,6 +248,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 is_main_page: false,
                 is_next_page: true,
             });
+            return;
         }
         match handle_result_response(get(url)) {
             Ok(html) => {
@@ -273,6 +274,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 is_main_page: false,
                 is_next_page: true,
             });
+            return;
         }
         match self.get_file(file_path) {
             Ok(html) => {
