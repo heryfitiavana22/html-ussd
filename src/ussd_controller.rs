@@ -23,7 +23,7 @@ pub struct HistoryItem {
 }
 
 pub struct UssdController<R: Renderer, T: TagAdapter> {
-    pub pages: HashMap<String, String>,
+    pub cache_pages: HashMap<String, String>,
     pub main_page: String,
     pub adapter: T,
     pub validator: ValidatorAndTransformer,
@@ -33,7 +33,7 @@ pub struct UssdController<R: Renderer, T: TagAdapter> {
 }
 
 pub struct NewController<R: Renderer, T: TagAdapter> {
-    pub pages: HashMap<String, String>,
+    pub cache_pages: HashMap<String, String>,
     pub main_page: String,
     pub adapter: T,
     pub validator: ValidatorAndTransformer,
@@ -50,7 +50,7 @@ pub struct DisplayParams {
 impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
     pub fn new(params: NewController<R, T>) -> Self {
         Self {
-            pages: params.pages,
+            cache_pages: params.cache_pages,
             main_page: params.main_page,
             adapter: params.adapter,
             validator: params.validator,
@@ -132,22 +132,10 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             let next_link = option_next_link.unwrap();
 
                             if next_link.href.href_type == HrefType::File {
-                                match self.get_file(&next_link.href.url) {
-                                    Ok(next_html) => {
-                                        self.display(DisplayParams {
-                                            html: next_html.clone(),
-                                            is_main_page: false,
-                                            is_next_page: true,
-                                        });
-                                        return;
-                                    }
-                                    Err(err) => {
-                                        println!("{}", err);
-                                        return;
-                                    }
-                                }
+                                self.display_from_file(&next_link.href.url);
+                                return;
                             } else {
-                                self.handle_response(get(&next_link.href.url));
+                                self.display_from_server_url(&next_link.href.url);
                                 return;
                             }
                         }
@@ -236,10 +224,40 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         }
     }
 
-    pub fn get_file(&self, file_path: &str) -> Result<String, String> {
-        if let Some(next_html) = self.pages.get(file_path) {
-            return Ok(next_html.to_string());
+    pub fn display_from_server_url(&self, url: &str) {
+        if let Some(cached_html) = self.cache_pages.get(url) {
+            self.display(DisplayParams {
+                html: cached_html.clone(),
+                is_main_page: false,
+                is_next_page: true,
+            });
         }
+        self.handle_response(get(url))
+    }
+
+    pub fn display_from_file(&self, file_path: &str) {
+        if let Some(cached_html) = self.cache_pages.get(file_path) {
+            self.display(DisplayParams {
+                html: cached_html.clone(),
+                is_main_page: false,
+                is_next_page: true,
+            });
+        }
+        match self.get_file(file_path) {
+            Ok(html) => {
+                self.display(DisplayParams {
+                    html,
+                    is_main_page: false,
+                    is_next_page: true,
+                });
+            }
+            Err(err) => {
+                println!("{}", err);
+            }
+        }
+    }
+
+    pub fn get_file(&self, file_path: &str) -> Result<String, String> {
         let final_path = if let Some(base) = &self.base_dir {
             base.join(file_path)
         } else {

@@ -95,7 +95,7 @@ fn main() {
 
     let controller = UssdController::new(NewController {
         main_page,
-        pages: HashMap::new(),
+        cache_pages: HashMap::new(),
         adapter: DomTreeAdapter,
         renderer: TerminalRenderer,
         validator: ValidatorAndTransformer,
