@@ -80,7 +80,8 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         let tags = match self.adapter.transform(html.as_str()) {
             Ok(tags) => tags,
             Err(e) => {
-                eprintln!("Adapter error: {:?}", e);
+                self.renderer
+                    .render_error(format!("Adapter error: {:?}", e));
                 return;
             }
         };
@@ -88,7 +89,8 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         let tree = match self.validator.validate(tags) {
             Ok(tree) => tree,
             Err(e) => {
-                eprintln!("Validation error: {:?}", e);
+                self.renderer
+                    .render_error(format!("Validation error: {:?}", e));
                 return;
             }
         };
@@ -99,8 +101,8 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 page: html.to_string(),
                 is_main_page,
             });
-            // println!("is_next_page : {:?}", history);
-            // println!("is_next_page.len : {:?}", history.len());
+            // self.renderer.render_text(format!("is_next_page : {:?}", history);
+            // self.renderer.render_text(format!("is_next_page.len : {:?}", history.len());
             drop(history);
         }
 
@@ -124,12 +126,15 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                     BodyContent::Links(links) => {
                         if let Ok(index) = user_input.parse::<usize>() {
                             if index == 0 || index > links.len() {
-                                println!("Invalid input: selected link index is out of bounds");
+                                self.renderer.render_text(format!(
+                                    "Invalid input: selected link index is out of bounds"
+                                ));
                                 return;
                             }
                             let option_next_link = links.get(index - 1);
                             if option_next_link.is_none() {
-                                println!("Invalid input: invalid link index");
+                                self.renderer
+                                    .render_text(format!("Invalid input: invalid link index"));
                                 return;
                             }
                             let next_link = option_next_link.unwrap();
@@ -143,7 +148,8 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             }
                         }
 
-                        println!("Invalid input: expected a numeric value");
+                        self.renderer
+                            .render_text(format!("Invalid input: expected a numeric value"));
                     }
                     BodyContent::Form(form) => {
                         let valid = match form.input.input_type {
@@ -152,7 +158,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                         };
 
                         if valid {
-                            // println!("form data : {}", user_input);
+                            // self.renderer.render_text(format!("form data : {}", user_input);
                             let url = &form.action;
                             let param_name = &form.input.name;
                             let client = Client::new();
@@ -167,7 +173,9 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             };
                             self.handle_response(response_result);
                         } else {
-                            println!("Invalid form input: please enter a valid value");
+                            self.renderer.render_text(format!(
+                                "Invalid form input: please enter a valid value"
+                            ));
                         }
                     }
                     BodyContent::Empty => {}
@@ -179,8 +187,8 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
     fn go_back(&self) {
         let mut history = self.history.borrow_mut();
         history.pop();
-        // println!("go_back : {:?}", history);
-        // println!("go_back.len : {:?}", history.len());
+        // self.renderer.render_text(format!("go_back : {:?}", history);
+        // self.renderer.render_text(format!("go_back.len : {:?}", history.len());
 
         if let Some(previous) = history.pop() {
             drop(history);
@@ -191,7 +199,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             });
         } else {
             drop(history);
-            // println!("No previous page");
+            // self.renderer.render_text(format!("No previous page");
             self.display(DisplayParams {
                 html: self.main_page.clone(),
                 is_main_page: true,
@@ -222,7 +230,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 });
             }
             Err(err) => {
-                println!("{:}", err);
+                self.renderer.render_text(format!("{:}", err));
             }
         }
     }
@@ -241,7 +249,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
 
     pub fn display_from_server_url(&self, url: &str) {
         if let Some(cached_html) = self.get_from_cache(url) {
-            // println!("from cache in display_from_server_url");
+            // self.renderer.render_text(format!("from cache in display_from_server_url");
 
             self.display(DisplayParams {
                 html: cached_html.clone(),
@@ -260,14 +268,14 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 });
             }
             Err(err) => {
-                println!("{:}", err);
+                self.renderer.render_text(format!("{:}", err));
             }
         }
     }
 
     pub fn display_from_file(&self, file_path: &str) {
         if let Some(cached_html) = self.get_from_cache(file_path) {
-            // println!("from cache in display_from_file");
+            // self.renderer.render_text(format!("from cache in display_from_file");
 
             self.display(DisplayParams {
                 html: cached_html.clone(),
@@ -286,7 +294,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 });
             }
             Err(err) => {
-                println!("{}", err);
+                self.renderer.render_text(format!("{}", err));
             }
         }
     }

@@ -9,4 +9,8 @@ pub struct RenderParams<'a> {
 pub trait Renderer {
     #[allow(clippy::needless_lifetimes)]
     fn render<'a>(&self, params: RenderParams<'a>);
+
+    fn render_text(&self, text: String);
+
+    fn render_error(&self, error: String);
 }

@@ -78,4 +78,12 @@ impl Renderer for TerminalRenderer {
             Err(_) => println!("{}", t("no_input")),
         }
     }
+
+    fn render_text(&self, text: String) {
+        println!("{}", text)
+    }
+
+    fn render_error(&self, error: String) {
+        eprintln!("{}", error)
+    }
 }
