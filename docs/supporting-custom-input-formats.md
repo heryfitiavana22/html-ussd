@@ -1,4 +1,4 @@
-# Extending interface
+# Supporting Custom Input Formats
 
 **HTML-USSD** is designed to be modular and extensible. While it comes with built-in support for `HTML`, it does not require HTML specifically.
 

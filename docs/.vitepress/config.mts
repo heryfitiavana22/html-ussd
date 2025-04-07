@@ -6,9 +6,7 @@ export default defineConfig({
   description: "Simulate a USSD experience from HTML in your terminal",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: "Home", link: "/" },
-    ],
+    nav: [{ text: "Home", link: "/" }],
 
     sidebar: [
       {
@@ -40,11 +38,14 @@ export default defineConfig({
         ],
       },
       {
-        text: 'Advanced',
+        text: "Advanced",
         items: [
-          { text: 'How Cache Works', link: '/how-cache-works' },
-          { text: 'Extending interface', link: '/extending-interface' },
-        ]
+          { text: "How Cache Works", link: "/how-cache-works" },
+          {
+            text: "Supporting Custom Input Formats",
+            link: "/supporting-custom-input-formats",
+          },
+        ],
       },
     ],
 
