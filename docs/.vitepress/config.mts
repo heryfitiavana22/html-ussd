@@ -37,6 +37,7 @@ export default defineConfig({
               { text: "input", link: "/tags/input-tag" },
             ],
           },
+          { text: "CLI", link: "/cli" },
         ],
       },
       {

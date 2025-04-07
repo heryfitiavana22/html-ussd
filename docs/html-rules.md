@@ -21,7 +21,7 @@ Each HTML file must:
 >
 > - A page cannot include both [`<a>`](./tags/a-tag) links and a [`<form>`](./tags/form-tag).
 > - All Text or Paragraph must be before [`<a>`](./tags/a-tag) or [`<form>`](./tags/form-tag).
-> - If the `<body>` contains neither [`<a>`](./tags/a-tag) nor a [`<form>`](./tags/form-tag), it is considered a terminal screen. This means the program ends, and no user input is expected.
+> - If the `<body>` contains neither [`<a>`](./tags/a-tag) nor a [`<form>`](./tags/form-tag), it is considered an end screen. This means the program ends, and no user input is expected.
 
 ## Navigation Behavior
 
@@ -31,7 +31,7 @@ Each HTML file must:
 - **Form ([`<form>`](./tags/form-tag))**:  
   Users input text or numbers. The form must have an `action` attribute pointing to a server URL. It may optionally include a `method` attribute (`get` by default). Upon submission, the app proceeds to the target specified in the form action.
 
-If no interaction is found (no [`<a>`](./tags/a-tag) and no [`<form>`](./tags/form-tag)), the application automatically exits.
+- If no interaction is found (no [`<a>`](./tags/a-tag) and no [`<form>`](./tags/form-tag)), the application automatically exits.
 
 ## Example: A Simple Menu
 

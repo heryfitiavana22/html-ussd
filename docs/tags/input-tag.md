@@ -10,6 +10,7 @@ The `<input>` element is used inside a [`<form>`](./form-tag) to **capture user 
 > [!IMPORTANT]
 >
 > - The `name` attribute in the `<input>` corresponds to the key in the query string or request body.
+> - If the `type` is set to `number`, entering a non-numeric value will cause an error.
 
 
 ## Example
