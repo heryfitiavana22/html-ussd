@@ -33,6 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: docs/pnpm-lock.yaml
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -42,7 +43,7 @@ jobs:
 
       - name: Build with VitePress
         run: cd docs && pnpm docs:build
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
