@@ -4,12 +4,6 @@ The `html-ussd` CLI lets you lets you simulate USSD flows defined in HTML files.
 
 You can use it with **local files** or load screens from a **remote server**.
 
-## Installation
-
-```bash
-cargo install html-ussd
-```
-
 ## Basic Usage
 
 ```bash

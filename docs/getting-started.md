@@ -2,6 +2,18 @@
 
 Learn how to quickly install and run **HTML-USSD** to simulate USSD flows.
 
+## Installation
+
+- **Linux/macOS/WSL**
+```bash
+curl -sSL https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.sh | bash
+```
+
+- **Windows(powershell)**
+```bash
+irm https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.bat | iex
+```
+
 ## Running the App
 
 To simulate a USSD session, you need an HTML file or a URL that follows the [HTML Language Rules](./html-rules);
