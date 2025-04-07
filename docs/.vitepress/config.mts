@@ -39,7 +39,13 @@ export default defineConfig({
           { text: "CLI", link: "/cli" },
         ],
       },
-      { text: "How cache works", link: "/how-cache-works" },
+      {
+        text: 'Advanced',
+        items: [
+          { text: 'How Cache Works', link: '/how-cache-works' },
+          { text: 'Extending interface', link: '/extending-interface' },
+        ]
+      },
     ],
 
     socialLinks: [
