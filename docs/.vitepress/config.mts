@@ -40,6 +40,7 @@ export default defineConfig({
           { text: "CLI", link: "/cli" },
         ],
       },
+      { text: "How cache works", link: "/how-cache-works" },
       {
         text: "Examples",
         items: [
