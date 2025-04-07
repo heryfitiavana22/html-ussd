@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "HTML USSD"
-  text: "Simulate USSD experiences directly from HTML"
+  text: "Simulate USSD apps with simple HTML"
   tagline: Build and preview USSD-like interfaces using simple HTML and run them in your terminal.
   actions:
     - theme: brand
@@ -15,16 +15,10 @@ hero:
       link: /cli
 
 features:
-  - title: HTML-Based
-    details: Write simple HTML files with custom rules to define USSD screens. No need for custom DSLs or frameworks.
-  - title: Terminal Renderer
-    details: Render USSD flows directly inside your terminal with a simple and clean UI experience.
-  - title: Navigation & Forms
-    details: Supports links and forms with input validation, server interactions, and local file-based flows.
-  - title: Multilingual Support
-    details: Easily localize your USSD interface in English, French, or Malagasy.
-  - title: CLI Launcher
-    details: Launch from an HTML file or a remote URL using the CLI with language selection and optional caching.
-  - title: Extendable
-    details: Built with separation of concerns (adapter, renderer, validator) following Hexagonal Architecture principles.
+  - title: Just HTML
+    details: Design USSD flows using regular HTML with a few custom rules. No need for a new DSL.
+  - title: Built for CLI
+    details: Run your flows in the terminal, from local files or remote URLs.
+  - title: Multilingual & Extendable
+    details: Easily switch between English, French, and Malagasy 🇲🇬, and plug in your own parser (HTML, JSON, XML...) thanks to the adapter
 ---
