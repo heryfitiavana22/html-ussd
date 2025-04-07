@@ -1,6 +1,8 @@
 # Extending interface
 
-**HTML-USSD** is designed to be modular and extensible. Although it primarily uses `HTML` as input, the system is built to support other formats — such as `JSON`, `XML`, or even domain-specific languages — thanks to the `TagAdapter` trait.
+**HTML-USSD** is designed to be modular and extensible. While it comes with built-in support for `HTML`, it does not require HTML specifically.
+
+Thanks to the `TagAdapter` trait, you can plug in any custom input format — such as `JSON`, `XML`, or even a completely different DSL — and still benefit from the full USSD simulation engine.
 
 This guide explains how to create your own adapter.
 
@@ -44,6 +46,33 @@ pub enum Tag {
     Input,
 }
 
+```
+
+### Example: Custom JSON Adapter
+
+You could, for example, design a JSON adapter that takes this:
+
+```json
+{
+  "type": "menu",
+  "title": "My USSD Menu",
+  "options": [
+    { "label": "Option 1", "href": "option1.html" },
+    { "label": "Option 2", "href": "option2.html" }
+  ]
+}
+```
+
+Implement `TagAdapter` :
+
+```rust
+pub struct JsonAdapter;
+
+impl TagAdapter for JsonAdapter {
+    fn transform(&self, content: &str) -> Result<Vec<RawTag>, AdapterError> {
+        todo!()
+    }
+}
 ```
 
 ## Plugging in Your Adapter
