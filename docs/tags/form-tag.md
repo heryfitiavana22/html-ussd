@@ -11,10 +11,16 @@ The `<form>` element allows the user to **submit input** (text or numbers).
 
 > [!IMPORTANT]
 >
-> - When using **get**, the data is included in the *query string*.
-> - When using **post**, the data is included in the *request body*, with the `Content-Type` header set to `application/x-www-form-urlencoded`.
+> - When using **get**, the data is included in the _query string_.
+> - When using **post**, the data is included in the _request body_, with the `Content-Type` header set to `application/x-www-form-urlencoded`.
 > - With both **get** and **post**, the `name` attribute in the `<input>` corresponds to the key in the query string or request body.
 
+## Attributes
+
+| Attribute | Values        | Default | Description                                | Required |
+| --------- | ------------- | ------- | ------------------------------------------ | -------- |
+| `action`  | Server URL    | —       | URL where the form data will be submitted. | Yes      |
+| `method`  | `get`, `post` | `get`   | Method used to submit the form data..      | No       |
 
 ## Example
 

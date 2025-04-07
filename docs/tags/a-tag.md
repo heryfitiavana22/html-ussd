@@ -23,11 +23,11 @@ html/
 ::: code-group
 
 ```html [index.html]
-<html >
+<html>
   <head>
     <title>Main Page</title>
   </head>
-  <body >
+  <body>
     Welcome
     <a href="page1.html">Page 1</a>
     <a href="sub/s1.html">Sub folder s1</a>
@@ -36,22 +36,22 @@ html/
 ```
 
 ```html [page1.html]
-<html >
+<html>
   <head>
     <title>Page 1</title>
   </head>
-  <body >
+  <body>
     Welcome to page 1
   </body>
 </html>
 ```
 
 ```html {7} [sub/s1.html]
-<html >
+<html>
   <head>
     <title>Sub s1</title>
   </head>
-  <body >
+  <body>
     Welcome to sub s1
     <a href="index.html">Main page</a>
   </body>
@@ -59,6 +59,12 @@ html/
 ```
 
 :::
+
+## Attributes
+
+| Attribute | Values                        | Default | Description                             | Required |
+| --------- | ----------------------------- | ------- | --------------------------------------- | -------- |
+| `href`    | Local file path or server URL | —       | Link to another page (local or remote). | Yes     |
 
 ## Example
 
