@@ -20,13 +20,13 @@ html-ussd --main <MAIN>
 
 ## Options
 
-| Option            | Description                                             | Example                              |
-| :---------------- | :------------------------------------------------------ | :----------------------------------- |
-| `-m`, `--main`    | Main entry file or URL.                                 | `html-ussd -m index.html`            |
-| `-l`, `--lang`    | Language to use (`en`, `fr`, `mg`).                     | `html-ussd -m index.html -l fr`      |
-| `--no-cache`      | Disable cache. Forces reloading of HTML files or pages. | `html-ussd -m index.html --no-cache` |
-| `-h`, `--help`    | Show help information.                                  | `html-ussd --help`                   |
-| `-v`, `--version` | Show current version.                                   | `html-ussd --version`                |
+| Option                            | Description                                             |
+| :-------------------------------- | :------------------------------------------------------ |
+| `-m`, `--main`                    | Main entry file or URL.                                 |
+| `-l`, `--lang`                    | Language to use (`en`, `fr`, `mg`).                     |
+| [`--no-cache`](./how-cache-works) | Disable cache. Forces reloading of HTML files or pages. |
+| `-h`, `--help`                    | Show help information.                                  |
+| `-v`, `--version`                 | Show current version.                                   |
 
 ## Examples
 

@@ -21,7 +21,9 @@ You just write a few HTML files with a specific structure, and it simulates a US
 ## Who is it for?
 
 - **Developers** simulating USSD flows without real telecom access.
+
 For example: your app requires a mobile-style payment flow, but you can't integrate with real USSD services — HTML-USSD lets you prototype and simulate it easily.
+
 - **Exploring** how USSD works in practice.
 - **Prototyping** USSD menus for quick feedback.
 
