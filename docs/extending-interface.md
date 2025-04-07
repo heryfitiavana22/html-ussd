@@ -80,8 +80,8 @@ impl TagAdapter for JsonAdapter {
 Once you've created your custom adapter, pass it when building the controller:
 
 ```rust
-let controller = UssdController::new(NewController {
-    adapter: JsonAdapter,
-    // other fields...
-});
+fn main() {
+    let runner = Runner::new(JsonAdapter, TerminalRenderer);
+    runner.run();
+}
 ```
