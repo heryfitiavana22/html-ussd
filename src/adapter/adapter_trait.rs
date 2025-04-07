@@ -1,7 +1,7 @@
 use crate::html::{Tag, TagElement};
 
 pub trait TagAdapter {
-    fn transform(&self, html: &str) -> Result<Vec<TagElement>, AdapterError>;
+    fn transform(&self, content: &str) -> Result<Vec<TagElement>, AdapterError>;
 }
 
 #[derive(Debug, PartialEq, Clone)]

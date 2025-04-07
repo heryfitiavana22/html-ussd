@@ -8,6 +8,7 @@ use crate::html::{Tag, TagElement};
 
 use super::adapter_trait::{AdapterError, TagAdapter};
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct DomTreeAdapter;
 
 impl DomTreeAdapter {

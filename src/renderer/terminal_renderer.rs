@@ -8,6 +8,7 @@ use crate::{
 
 use super::renderer_trait::{RenderParams, Renderer};
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct TerminalRenderer;
 
 impl Renderer for TerminalRenderer {
