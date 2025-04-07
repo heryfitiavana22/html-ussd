@@ -48,7 +48,7 @@ pub enum Tag {
 
 ```
 
-### Example: Custom JSON Adapter
+## Example: Custom JSON Adapter
 
 You could, for example, design a JSON adapter that takes this:
 
