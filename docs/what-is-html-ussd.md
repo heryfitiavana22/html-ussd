@@ -1,40 +1,35 @@
-# Introduction
+# What is HTML-USSD?
 
-**HTML-USSD** is a command-line tool that simulates USSD navigation experiences based on structured HTML files.
+**HTML-USSD** is a tool that lets you create and test USSD menus using simple HTML files — and run them right in your terminal.
 
-## What is HTML-USSD?
+## Why?
 
-USSD (Unstructured Supplementary Service Data) is a protocol used by mobile phones to communicate with a service provider's computers. It is often used for things like balance checks, top-ups, and service menus.
+USSD (like `*141#`, `*111#`, etc.) is widely used on mobile phones for checking balance, making payments, or navigating simple menus.  
+But building and testing USSD apps usually requires real phones or telecom tools.
 
-**HTML-USSD** lets you:
+**HTML-USSD** makes that easier:  
+You just write a few HTML files with a specific structure, and it simulates a USSD menu flow on your terminal.
 
-- Write USSD-like flows using simple, structured HTML.
-- Simulate and navigate those flows directly inside a terminal.
-- Develop and test USSD applications without needing a real mobile device.
+## What can it do?
 
-## Key Features
+- Run **USSD-like menus** from HTML
+- Let users **navigate with numbers** or **input text**
+- Work with local files or online URLs
+- Support multiple languages: English, French, Malagasy 🇲🇬
+- Help you build, test, or demo USSD apps without a phone
 
-- **HTML-Based Simulation**: Define screens and interactions with basic HTML tags.
-- **Terminal Rendering**: Navigate menus and input forms inside your terminal.
-- **Multilingual Support**: Built-in support for English, French, and Malagasy.
-- **CLI Interface**: Launch simulations via a flexible command-line tool.
-- **Offline or Online**: Load local HTML files or fetch them from a remote server.
+## Who is it for?
 
-## Supported Use Cases
+- **Developers** simulating USSD flows without real telecom access.
+For example: your app requires a mobile-style payment flow, but you can't integrate with real USSD services — HTML-USSD lets you prototype and simulate it easily.
+- **Exploring** how USSD works in practice.
+- **Prototyping** USSD menus for quick feedback.
 
-- Rapid prototyping of USSD applications.
-- Testing USSD flows before backend integration.
-- Educational purposes for learning how USSD works.
-- Building lightweight user interfaces without mobile devices.
+## How does it work?
 
-## How It Works
+HTML-USSD reads structured HTML files:
+- The `<title>` becomes the screen title
+- The `<body>` shows text, menus (`<a>`), or input forms
+- Users navigate by typing numbers or filling input
 
-HTML-USSD reads HTML files that follow specific rules:
-
-- Extracts titles, text, links, and forms.
-- Displays options interactively in the terminal.
-- Accepts input and navigates based on user selections.
-
-Want to try it out? Start with the [Getting Started guide](/getting-started).
-
----
+Ready to try? Start with the [Getting Started guide](/getting-started).

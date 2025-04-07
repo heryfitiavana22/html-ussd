@@ -2,16 +2,17 @@
 
 Learn how to quickly install and run **HTML-USSD** to simulate USSD flows.
 
-Running the App
-To simulate a USSD session, you need an HTML file or a URL that follows the [HTML Language Rules](./index);
+## Running the App
 
-Example usage:
+To simulate a USSD session, you need an HTML file or a URL that follows the [HTML Language Rules](./html-rules);
+
+**From a local file:**
 
 ```bash
 html-ussd --main index.html
 ```
 
-or from a remote server:
+**From a remote server:**
 
 ```bash
 html-ussd --main http://localhost:8888/

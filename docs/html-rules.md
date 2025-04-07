@@ -4,7 +4,7 @@ To simulate USSD flows, **HTML-USSD** expects HTML files to follow strict struct
 
 This ensures a consistent and simple experience, similar to real USSD menus on mobile phones.
 
-## Structure Rules
+## HTML Structure Requirements
 
 Each HTML file must:
 
@@ -23,7 +23,7 @@ Each HTML file must:
 > - All Text or Paragraph must be before [`<a>`](./tags/a-tag) or [`<form>`](./tags/form-tag).
 > - If the `<body>` contains neither [`<a>`](./tags/a-tag) nor a [`<form>`](./tags/form-tag), it is considered an end screen. This means the program ends, and no user input is expected.
 
-## Navigation Behavior
+## How Navigation Works in HTML-USSD
 
 - **Links ([`<a>`](./tags/a-tag))**:  
   Users select a numeric option to navigate to another page or URL.
