@@ -60,11 +60,11 @@ fn main() {
 **From a local file:**
 
 ```bash
-cargo run --main index.html
+cargo run -- run --main index.html
 ```
 
 **From a remote server:**
 
 ```bash
-cargo run --main http://localhost:8888/
+cargo run -- run --main http://localhost:8888/
 ```

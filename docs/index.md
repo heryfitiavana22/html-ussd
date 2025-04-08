@@ -15,10 +15,10 @@ hero:
       link: /cli
 
 features:
-  - title: Just HTML
-    details: Design USSD flows using regular HTML with a few custom rules. No need for a new DSL.
-  - title: Built for CLI
-    details: Run your flows in the terminal, from local files or remote URLs.
+  - title: Just HTML & Built for CLI
+    details: Design USSD flows using regular HTML with a few custom rules — no need for a new DSL — run them from your terminal using local files or remote URLs.
+  - title: Secure
+    details: Add headers, access tokens, query params to every request for full control over external server interactions.
   - title: Multilingual & Extendable
     details: Easily switch between English, French, and Malagasy 🇲🇬, and plug in your own parser (HTML, JSON, XML...) or renderer thanks to the adapter
 ---

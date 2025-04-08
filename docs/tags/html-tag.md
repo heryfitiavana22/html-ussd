@@ -9,6 +9,7 @@ The `<html>` tag is the **root element** of every HTML file used in HTML-USSD.
 
 ## Attributes
 
-| Attribute         | Values          | Default | Description                                      | Required |
-| ----------------- | --------------- | ------- | ------------------------------------------------ | -------- |
-| `history-enabled` | `true`, `false` | `true`  | Determines if the page should be in the history. | No       |
+| Attribute         | Values          | Default | Description                                        | Required |
+| ----------------- | --------------- | ------- | -------------------------------------------------- | -------- |
+| `history-enabled` | `true`, `false` | `true`  | Determines if the page should be in the `history`. | No       |
+| `cache`           | `true`, `false` | `true`  | Determines if the page should be in the `cache`.   | No       |

@@ -14,5 +14,5 @@ By default, caching is enabled, but you can disable it with the `--no-cache` opt
 Example:
 
 ```bash
-html-ussd --main index.html --no-cache
+html-ussd run --main "https://html-ussd-example.onrender.com/main-page" --no-cache
 ```

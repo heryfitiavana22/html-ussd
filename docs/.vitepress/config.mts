@@ -35,6 +35,7 @@ export default defineConfig({
             ],
           },
           { text: "CLI", link: "/cli" },
+          { text: "Navigation Behavior", link: "/navigation-behavior" },
         ],
       },
       {
@@ -46,6 +47,7 @@ export default defineConfig({
             text: "Supporting Custom Input Formats",
             link: "/supporting-custom-input-formats",
           },
+          { text: "Security and External Requests", link: "/security" },
         ],
       },
     ],
@@ -53,5 +55,9 @@ export default defineConfig({
     socialLinks: [
       { icon: "github", link: "https://github.com/heryfitiavana22/html-ussd" },
     ],
+
+    search: {
+      provider: 'local'
+    }
   },
 });

@@ -30,19 +30,19 @@ irm https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/ins
 
 Then run from
 
-- a remote server
+- a remote server (this is live page)
 
 ```bash
-html-ussd --main http://localhost:8888/
+html-ussd run --main "https://html-ussd-example.onrender.com/main-page"
 ```
 
 - a local HTML file
 
 ```bash
-html-ussd --main index.html
+html-ussd run --main index.html
 ```
 
 ## Contributing
 
 Contributions and feedback are welcome.
-If you want to implement a custom adapter (e.g., JSON, XML), check out the [TagAdapter](http://localhost:8888/) or [Renderer](http://localhost:8888/) section in the docs.
+If you want to implement a custom adapter (e.g., JSON, XML), check out the [TagAdapter](https://heryfitiavana22.github.io/html-ussd/supporting-custom-input-formats.html) or [Renderer](https://heryfitiavana22.github.io/html-ussd/custom-renderer.html) section in the docs.

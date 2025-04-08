@@ -93,12 +93,12 @@ fn main() {
 **From a local file:**
 
 ```bash
-cargo run --main index.json
+cargo run -- run --main index.json
 ```
 
 **From a remote server:**
 
 ```bash
-cargo run --main http://localhost:8888/
+cargo run -- run --main http://localhost:8888/
 ```
 
