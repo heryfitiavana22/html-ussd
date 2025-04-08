@@ -68,11 +68,11 @@ mod tests {
     #[test]
     fn valid_conversion() {
         let html = r#"
-    <html lang="en">
+    <html>
     <head>
         <title>Document</title>
     </head>
-    <body id="container">
+    <body>
         ok ceci est un texte
         <a href="2" id="l1">link1</a>
         <a href="1">link2</a>
@@ -87,11 +87,11 @@ mod tests {
     #[test]
     fn unexpected_tag() {
         let html = r#"
-    <html lang="en">
+    <html>
     <head>
         <title>Document</title>
     </head>
-    <body id="container">
+    <body>
         ok ceci est un texte
         <a href="2" id="l1">link1</a>
         <button href="1">link2</button>

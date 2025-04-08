@@ -18,6 +18,8 @@ app.get("/main-page", (req, res) => {
 
 app.get("/paiment", (req, res) => {
   console.log("paiment");
+  console.log(req.query);
+
   res.render("paiement");
 });
 
@@ -64,6 +66,18 @@ app.get("/not-in-history", (req, res) => {
 app.get("/after-not-in-history", (req, res) => {
   console.log("after-not-in-history");
   res.render("after-not-in-history");
+});
+
+app.get("/list-offre", (req, res) => {
+  console.log("list-offre");
+  res.render("list-offre");
+});
+
+app.get("/handle-offre", (req, res) => {
+  console.log("handle-offre");
+  console.log(req.query);
+  const { user_entry } = req.query;
+  res.render("offre-" + user_entry);
 });
 
 app.get("/end", (req, res) => {

@@ -40,7 +40,7 @@ Each HTML file must:
   <head>
     <title>Main Page</title>
   </head>
-  <body id="container">
+  <body>
     Welcome to html-usdd
     <p>This is a paragraph</p>
     <a href="http://localhost:8888/payment">Payment</a>
@@ -75,7 +75,7 @@ This is a paragraph
   <head>
     <title>Form get</title>
   </head>
-  <body id="container">
+  <body>
     This is form with get
     <form action="http://localhost:8888/handle-text" method="get">
       <input type="text" name="text" placeholder="Enter text" />
@@ -111,7 +111,7 @@ Entrer un text
   <head>
     <title>End screen</title>
   </head>
-  <body id="container">
+  <body>
     This is and screen
   </body>
 </html>

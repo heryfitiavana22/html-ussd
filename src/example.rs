@@ -20,11 +20,11 @@ fn main() {
     init_i18n(Lang::En);
     // println!("Hello, world!");
     let main_page = r#"
-    <html lang="en">
+    <html>
     <head>
         <title>Titre main page</title>
     </head>
-    <body id="container">
+    <body>
         bievenue
         <a href="http://localhost:8888/main-page" id="l1">server</a>
         <a href="page2.html" id="l1">page 2</a>
@@ -33,22 +33,22 @@ fn main() {
     </html>"#;
 
     let page2 = r#"
-    <html lang="en">
+    <html>
     <head>
         <title>Titre page 2</title>
     </head>
-    <body id="container">
+    <body>
         oui miova e
         <a href="page3.html">link2</a>
     </body>
     </html>"#;
 
     let page3 = r#"
-    <html lang="en">
+    <html>
     <head>
         <title>Titre page 3</title>
     </head>
-    <body id="container">
+    <body>
         farany
     </body>
     </html>"#;
