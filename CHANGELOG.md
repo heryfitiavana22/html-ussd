@@ -93,6 +93,7 @@ All notable changes to this project will be documented in this file.
 - Change header level for Custom JSON Adapter example for consistency
 - Update hero text and feature descriptions for clarity and consistency
 - Add documentation for creating a custom renderer and update supporting custom input formats
+- Add comprehensive changelog detailing features, bug fixes, refactors, and documentation updates
 
 ### Testing
 
