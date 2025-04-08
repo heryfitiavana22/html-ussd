@@ -74,6 +74,11 @@ app.get("/after-not-in-history", (req, res) => {
   res.render("after-not-in-history");
 });
 
+app.get("/not-in-cache", (req, res) => {
+  console.log("not-in-cache");
+  res.render("not-in-cache");
+});
+
 app.get("/list-offre", (req, res) => {
   console.log("list-offre");
   res.render("list-offre");

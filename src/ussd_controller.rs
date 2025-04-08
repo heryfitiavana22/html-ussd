@@ -16,6 +16,7 @@ const HOME_KEY: &str = "00";
 pub struct HistoryItem {
     pub page: String,
     pub is_main_page: bool,
+    pub source_url: String,
 }
 
 pub struct UssdController<R: Renderer, T: TagAdapter> {
@@ -49,6 +50,7 @@ pub struct DisplayParams {
     pub html: String,
     pub is_main_page: bool,
     pub is_next_page: bool,
+    pub source_url: String,
 }
 
 impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
@@ -73,6 +75,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             html: self.main_page.clone(),
             is_main_page: true,
             is_next_page: true,
+            source_url: "main".to_string(),
         });
     }
     pub fn display(&self, params: DisplayParams) {
@@ -80,6 +83,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             html,
             is_main_page,
             is_next_page,
+            source_url,
         } = params;
 
         let tags = match self.tag_adapter.transform(html.as_str()) {
@@ -105,6 +109,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             history.push(HistoryItem {
                 page: html.to_string(),
                 is_main_page,
+                source_url: source_url.clone(),
             });
             // self.renderer.render_text(format!("is_next_page : {:?}", history);
             // self.renderer.render_text(format!("is_next_page.len : {:?}", history.len());
@@ -112,6 +117,11 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         }
 
         let body_content = tree.source.body.content.clone();
+        let cache = tree.source.cache.clone();
+
+        if cache {
+            self.set_to_cache(source_url, html.clone());
+        }
 
         self.renderer.render(RenderParams {
             tree,
@@ -175,7 +185,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                                 FormMethod::Get => self.http_client.get(url, get_query),
                                 FormMethod::Post => self.http_client.post(url, data),
                             };
-                            self.display_from_request_result(response_result, url, false);
+                            self.display_from_request_result(response_result, url);
                         } else {
                             self.renderer.render_text(
                                 "Invalid form input: please enter a valid value".to_string(),
@@ -200,6 +210,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 html: previous.page,
                 is_main_page: previous.is_main_page,
                 is_next_page: true,
+                source_url: previous.source_url,
             });
         } else {
             drop(history);
@@ -208,6 +219,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 html: self.main_page.clone(),
                 is_main_page: true,
                 is_next_page: true,
+                source_url: "main".to_string(),
             });
         }
     }
@@ -221,6 +233,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             html: self.main_page.clone(),
             is_main_page: true,
             is_next_page: true,
+            source_url: "main".to_string(),
         });
     }
 
@@ -231,26 +244,23 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
     }
 
     pub fn set_to_cache(&self, key: String, value: String) {
+        if !self.use_cache {
+            return;
+        }
+        // self.renderer.render_text(format!("set_to_cache : {:?}", key));
         let mut caches = self.cache_pages.borrow_mut();
         caches.insert(key, value);
         drop(caches);
     }
 
-    pub fn display_from_request_result(
-        &self,
-        result: Result<String, String>,
-        url: &str,
-        cache: bool,
-    ) {
+    pub fn display_from_request_result(&self, result: Result<String, String>, url: &str) {
         match result {
             Ok(html) => {
-                if cache {
-                    self.set_to_cache(url.to_string(), html.clone());
-                }
                 self.display(DisplayParams {
                     html,
                     is_main_page: false,
                     is_next_page: true,
+                    source_url: url.to_string(),
                 });
             }
             Err(err) => {
@@ -261,39 +271,42 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
 
     pub fn display_from_server_url(&self, url: &str, user_entry: usize) {
         if let Some(cached_html) = self.get_from_cache(url) {
-            // self.renderer.render_text(format!("from cache in display_from_server_url");
+            // self.renderer
+            //     .render_text(format!("from cache in display_from_server_url"));
 
             self.display(DisplayParams {
                 html: cached_html.clone(),
                 is_main_page: false,
                 is_next_page: true,
+                source_url: url.to_string(),
             });
             return;
         }
         let query = vec![("user_entry".to_string(), user_entry.to_string())];
         let result = self.http_client.get(url, query);
 
-        self.display_from_request_result(result, url, true)
+        self.display_from_request_result(result, url)
     }
 
     pub fn display_from_file(&self, file_path: &str) {
         if let Some(cached_html) = self.get_from_cache(file_path) {
-            // self.renderer.render_text(format!("from cache in display_from_file");
+            // self.renderer.render_text(format!("from cache in display_from_file"));
 
             self.display(DisplayParams {
                 html: cached_html.clone(),
                 is_main_page: false,
                 is_next_page: true,
+                source_url: file_path.to_string(),
             });
             return;
         }
         match self.get_file(file_path) {
             Ok(html) => {
-                self.set_to_cache(file_path.to_string(), html.clone());
                 self.display(DisplayParams {
                     html,
                     is_main_page: false,
                     is_next_page: true,
+                    source_url: file_path.to_string(),
                 });
             }
             Err(err) => {

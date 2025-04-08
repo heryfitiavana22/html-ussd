@@ -31,6 +31,7 @@ pub struct Html {
     pub head: Head,
     pub body: Body,
     pub history_enabled: bool,
+    pub cache: bool
 }
 
 #[derive(Debug, PartialEq, Clone)]

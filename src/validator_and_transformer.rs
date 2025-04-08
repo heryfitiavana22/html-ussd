@@ -13,6 +13,7 @@ impl ValidatorAndTransformer {
         &self,
         tag_elements: Vec<TagElement>,
     ) -> Result<HtmlUssdTree, ValidatorAndTransformerError> {
+        // FIXME: tag_elements.len() == 1
         let option_html: Option<&TagElement> = tag_elements.first();
         if option_html.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Html));
@@ -28,6 +29,11 @@ impl ValidatorAndTransformer {
             ));
         }
         let history_enabled = match html_element.attributes.get("history-enabled") {
+            Some(val) => val == "true",
+            None => true,
+        };
+
+        let cache = match html_element.attributes.get("cache") {
             Some(val) => val == "true",
             None => true,
         };
@@ -257,6 +263,7 @@ impl ValidatorAndTransformer {
                 source: Html {
                     attributes: html_element.attributes.clone(),
                     history_enabled,
+                    cache,
                     head: Head {
                         attributes: head_element.attributes.clone(),
                         title: Title {
