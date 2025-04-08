@@ -25,7 +25,7 @@ pub struct HistoryItem {
 pub struct UssdController<R: Renderer, T: TagAdapter> {
     pub cache_pages: RefCell<HashMap<String, String>>,
     pub main_page: String,
-    pub adapter: T,
+    pub tag_adapter: T,
     pub validator: ValidatorAndTransformer,
     pub renderer: R,
     pub history: RefCell<Vec<HistoryItem>>,
@@ -36,7 +36,7 @@ pub struct UssdController<R: Renderer, T: TagAdapter> {
 pub struct NewController<R: Renderer, T: TagAdapter> {
     pub cache_pages: HashMap<String, String>,
     pub main_page: String,
-    pub adapter: T,
+    pub tag_adapter: T,
     pub validator: ValidatorAndTransformer,
     pub renderer: R,
     pub base_dir: Option<PathBuf>,
@@ -54,7 +54,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         Self {
             cache_pages: RefCell::new(params.cache_pages),
             main_page: params.main_page,
-            adapter: params.adapter,
+            tag_adapter: params.tag_adapter,
             validator: params.validator,
             renderer: params.renderer,
             history: RefCell::new(vec![]),
@@ -77,7 +77,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             is_next_page,
         } = params;
 
-        let tags = match self.adapter.transform(html.as_str()) {
+        let tags = match self.tag_adapter.transform(html.as_str()) {
             Ok(tags) => tags,
             Err(e) => {
                 self.renderer

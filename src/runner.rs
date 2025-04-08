@@ -89,7 +89,7 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
         let controller = UssdController::new(NewController {
             main_page,
             cache_pages: HashMap::new(),
-            adapter: self.tag_adapter.clone(),
+            tag_adapter: self.tag_adapter.clone(),
             renderer: self.renderer.clone(),
             validator: ValidatorAndTransformer,
             base_dir,
