@@ -5,7 +5,7 @@ use clap::Parser;
 use crate::{
     adapter::adapter_trait::TagAdapter,
     command::Cli,
-    helper::{fetch_html, is_server_url, load_file},
+    helper::{fetch_page, is_server_url, load_file},
     i18n::{Lang, init_i18n},
     renderer::renderer_trait::Renderer,
     ussd_controller::{NewController, UssdController},
@@ -42,9 +42,13 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
         let main_page;
         let base_dir;
 
+        let param_phone = "phone".to_string();
+        let param_phone_value = cli.phone.clone();
+        let default_request_data = vec![(param_phone, param_phone_value)];
+
         let main_str = cli.main.as_str();
         if is_server_url(main_str) {
-            match fetch_html(main_str) {
+            match fetch_page(main_str, default_request_data.clone()) {
                 Ok(html) => {
                     main_page = html;
                     base_dir = None;
@@ -71,11 +75,6 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
 
         // println!("Base dir: {:?}", base_dir);
 
-        let param_phone = "phone".to_string();
-        let param_phone_value = cli.phone.clone();
-
-        let query = vec![(param_phone, param_phone_value)];
-
         let controller = UssdController::new(NewController {
             main_page,
             cache_pages: HashMap::new(),
@@ -85,7 +84,7 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
             base_dir,
             use_cache: !cli.no_cache,
             phone: cli.phone,
-            default_request_data: query,
+            default_request_data,
         });
         controller.run();
     }

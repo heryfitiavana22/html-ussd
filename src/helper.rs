@@ -1,7 +1,7 @@
 use clap::error::Result;
 use reqwest::{
     Error,
-    blocking::{Response, get},
+    blocking::{Client, Response},
 };
 
 pub fn is_server_url(url: &str) -> bool {
@@ -12,8 +12,9 @@ pub fn muted_text(input: &str) -> String {
     format!("\x1b[90m{} > \x1b[0m", input)
 }
 
-pub fn fetch_html(url: &str) -> Result<String, String> {
-    let response = get(url);
+pub fn fetch_page(url: &str, query: Vec<(String, String)>) -> Result<String, String> {
+    let client = Client::new();
+    let response = client.get(url).query(&query).send();
     handle_result_response(response)
 }
 
