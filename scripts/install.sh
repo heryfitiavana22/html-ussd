@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="v0.1.0"
+VERSION="v1.0.0"
 REPO="heryfitiavana22/html-ussd"
 
 detect_os() {
