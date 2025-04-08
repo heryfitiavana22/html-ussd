@@ -1,3 +1,5 @@
+use std::process::Command;
+
 use clap::error::Result;
 
 pub fn is_server_url(url: &str) -> bool {
@@ -31,6 +33,36 @@ pub fn parse_key_value_safe(pairs: &[String]) -> Result<Vec<(String, String)>, S
     }
 
     Ok(result)
+}
+
+pub fn uninstall_self() {
+    if cfg!(target_os = "windows") {
+        use std::env;
+        let home = env::var("USERPROFILE").unwrap_or_else(|_| ".".to_string());
+        let path = format!(
+            r"{}\{}.cargo\bin\html-ussd.exe",
+            home,
+            std::path::MAIN_SEPARATOR
+        );
+
+        if std::fs::remove_file(&path).is_ok() {
+            println!("Successfully uninstalled html-ussd from {}", path);
+        } else {
+            eprintln!("Failed to uninstall.");
+        }
+        return;
+    }
+    let path = "/usr/local/bin/html-ussd";
+    let status = Command::new("sudo").arg("rm").arg(path).status();
+
+    match status {
+        Ok(s) if s.success() => {
+            println!("Successfully uninstalled html-ussd from {}", path);
+        }
+        Ok(_) | Err(_) => {
+            eprintln!("Failed to uninstall.");
+        }
+    }
 }
 
 #[cfg(test)]
