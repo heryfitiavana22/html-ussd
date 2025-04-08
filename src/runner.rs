@@ -134,13 +134,13 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
                     validator: ValidatorAndTransformer,
                     base_dir,
                     use_cache: !no_cache,
-                    phone: phone,
+                    phone,
                     default_request_data,
                     http_client,
                 });
                 controller.run();
             }
-            Commands::Uninstall {} => {
+            Commands::Uninstall => {
                 uninstall_self();
             }
         }

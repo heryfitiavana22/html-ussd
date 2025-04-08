@@ -117,7 +117,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         }
 
         let body_content = tree.source.body.content.clone();
-        let cache = tree.source.cache.clone();
+        let cache = tree.source.cache;
 
         if cache {
             self.set_to_cache(source_url, html.clone());
