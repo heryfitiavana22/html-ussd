@@ -85,3 +85,20 @@ fn main() {
     runner.run();
 }
 ```
+
+> [!NOTE]  
+> If using local files, include the corresponding file name in the `href` attribute (e.g., `other-page.json`), just as you would with HTML.
+
+
+**From a local file:**
+
+```bash
+cargo run --main index.json
+```
+
+**From a remote server:**
+
+```bash
+cargo run --main http://localhost:8888/
+```
+

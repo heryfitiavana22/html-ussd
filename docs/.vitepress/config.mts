@@ -41,6 +41,7 @@ export default defineConfig({
         text: "Advanced",
         items: [
           { text: "How Cache Works", link: "/how-cache-works" },
+          { text: "Creating a Custom Renderer", link: "/custom-renderer" },
           {
             text: "Supporting Custom Input Formats",
             link: "/supporting-custom-input-formats",
