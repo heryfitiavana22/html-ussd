@@ -20,5 +20,5 @@ features:
   - title: Built for CLI
     details: Run your flows in the terminal, from local files or remote URLs.
   - title: Multilingual & Extendable
-    details: Easily switch between English, French, and Malagasy 🇲🇬, and plug in your own parser (HTML, JSON, XML...) thanks to the adapter
+    details: Easily switch between English, French, and Malagasy 🇲🇬, and plug in your own parser (HTML, JSON, XML...) or renderer thanks to the adapter
 ---
