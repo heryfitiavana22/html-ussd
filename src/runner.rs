@@ -41,7 +41,13 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
             }
         };
 
-        let default_header = match parse_key_value_safe(&cli.header) {
+        let mut mut_header = cli.header;
+
+        if let Some(token) = &cli.access_token {
+            mut_header.push(format!("Authorization=Bearer {}", token));
+        }
+
+        let default_header = match parse_key_value_safe(&mut_header) {
             Ok(parsed) => parsed,
             Err(e) => {
                 eprintln!("Error parsing headers: {}", e);
