@@ -33,23 +33,21 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
         // println!("Queries: {:?}", cli.query);
         // println!("Queries: {:?}", cli.header);
 
-        let default_query;
-        match parse_key_value_safe(&cli.query) {
-            Ok(parsed) => default_query = parsed,
+        let default_query = match parse_key_value_safe(&cli.query) {
+            Ok(parsed) => parsed,
             Err(e) => {
                 eprintln!("Error parsing queries: {}", e);
                 std::process::exit(1);
             }
-        }
+        };
 
-        let default_header;
-        match parse_key_value_safe(&cli.header) {
-            Ok(parsed) => default_header = parsed,
+        let default_header = match parse_key_value_safe(&cli.header) {
+            Ok(parsed) => parsed,
             Err(e) => {
                 eprintln!("Error parsing headers: {}", e);
                 std::process::exit(1);
             }
-        }
+        };
 
         let mut header = HeaderMap::new();
 
