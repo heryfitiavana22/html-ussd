@@ -13,12 +13,16 @@ app.get("/", (req, res) => {
 
 app.get("/main-page", (req, res) => {
   console.log("main-page");
+  console.log(req.headers);
+  console.log(req.query);
+
   res.render("main-page");
 });
 
 app.get("/paiment", (req, res) => {
   console.log("paiment");
   console.log(req.query);
+  console.log(req.headers);
 
   res.render("paiement");
 });
@@ -54,6 +58,8 @@ app.get("/form-post", (req, res) => {
 app.post("/handle-form-post", (req, res) => {
   console.log("handle-form-post");
   console.log(req.body);
+  console.log(req.headers);
+  console.log(req.query);
   const { code } = req.body;
   res.render("handle-form-post", { code });
 });

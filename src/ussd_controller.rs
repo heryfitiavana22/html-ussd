@@ -1,14 +1,10 @@
 use std::{cell::RefCell, collections::HashMap, path::PathBuf};
 
-use reqwest::{
-    Error,
-    blocking::{Client, Response},
-};
-
 use crate::{
     adapter::adapter_trait::TagAdapter,
-    helper::{handle_result_response, load_file},
+    helper::load_file,
     html::{BodyContent, FormMethod, HrefType, InputType},
+    http_client::HttpClient,
     renderer::renderer_trait::{RenderParams, Renderer},
     validator_and_transformer::ValidatorAndTransformer,
 };
@@ -33,6 +29,7 @@ pub struct UssdController<R: Renderer, T: TagAdapter> {
     pub use_cache: bool,
     pub phone: String,
     pub default_request_data: Vec<(String, String)>,
+    pub http_client: HttpClient,
 }
 
 pub struct NewController<R: Renderer, T: TagAdapter> {
@@ -45,6 +42,7 @@ pub struct NewController<R: Renderer, T: TagAdapter> {
     pub use_cache: bool,
     pub phone: String,
     pub default_request_data: Vec<(String, String)>,
+    pub http_client: HttpClient,
 }
 
 pub struct DisplayParams {
@@ -66,6 +64,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             use_cache: params.use_cache,
             phone: params.phone,
             default_request_data: params.default_request_data,
+            http_client: params.http_client,
         }
     }
 
@@ -168,15 +167,15 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             // self.renderer.render_text(format!("form data : {}", user_input);
                             let url = &form.action;
                             let param_name = form.input.name.clone();
-                            let client = Client::new();
                             let mut data = vec![(param_name, user_input)];
                             data.extend(self.default_request_data.clone());
+                            let get_query = data.clone();
 
                             let response_result = match form.method {
-                                FormMethod::Get => client.get(url).query(&data).send(),
-                                FormMethod::Post => client.post(url).form(&data).send(),
+                                FormMethod::Get => self.http_client.get(url, get_query),
+                                FormMethod::Post => self.http_client.post(url, data),
                             };
-                            self.handle_response(response_result);
+                            self.display_from_request_result(response_result, url, false);
                         } else {
                             self.renderer.render_text(
                                 "Invalid form input: please enter a valid value".to_string(),
@@ -225,21 +224,6 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         });
     }
 
-    fn handle_response(&self, response: Result<Response, Error>) {
-        match handle_result_response(response) {
-            Ok(html) => {
-                self.display(DisplayParams {
-                    html: html.clone(),
-                    is_main_page: false,
-                    is_next_page: true,
-                });
-            }
-            Err(err) => {
-                self.renderer.render_text(err);
-            }
-        }
-    }
-
     pub fn get_from_cache(&self, key: &str) -> Option<String> {
         let caches = self.cache_pages.borrow();
         let html = caches.get(key);
@@ -250,6 +234,29 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         let mut caches = self.cache_pages.borrow_mut();
         caches.insert(key, value);
         drop(caches);
+    }
+
+    pub fn display_from_request_result(
+        &self,
+        result: Result<String, String>,
+        url: &str,
+        cache: bool,
+    ) {
+        match result {
+            Ok(html) => {
+                if cache {
+                    self.set_to_cache(url.to_string(), html.clone());
+                }
+                self.display(DisplayParams {
+                    html,
+                    is_main_page: false,
+                    is_next_page: true,
+                });
+            }
+            Err(err) => {
+                self.renderer.render_text(err);
+            }
+        }
     }
 
     pub fn display_from_server_url(&self, url: &str, user_entry: usize) {
@@ -263,23 +270,10 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             });
             return;
         }
-        let client = Client::new();
-        let mut query = vec![("user_entry".to_string(), user_entry.to_string())];
-        query.extend(self.default_request_data.clone());
+        let query = vec![("user_entry".to_string(), user_entry.to_string())];
+        let result = self.http_client.get(url, query);
 
-        match handle_result_response(client.get(url).query(&query).send()) {
-            Ok(html) => {
-                self.set_to_cache(url.to_string(), html.clone());
-                self.display(DisplayParams {
-                    html,
-                    is_main_page: false,
-                    is_next_page: true,
-                });
-            }
-            Err(err) => {
-                self.renderer.render_text(err);
-            }
-        }
+        self.display_from_request_result(result, url, true)
     }
 
     pub fn display_from_file(&self, file_path: &str) {

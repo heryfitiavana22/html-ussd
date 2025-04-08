@@ -1,8 +1,4 @@
 use clap::error::Result;
-use reqwest::{
-    Error,
-    blocking::{Client, Response},
-};
 
 pub fn is_server_url(url: &str) -> bool {
     url.starts_with("http://") || url.starts_with("https://")
@@ -10,12 +6,6 @@ pub fn is_server_url(url: &str) -> bool {
 
 pub fn muted_text(input: &str) -> String {
     format!("\x1b[90m{} > \x1b[0m", input)
-}
-
-pub fn fetch_page(url: &str, query: Vec<(String, String)>) -> Result<String, String> {
-    let client = Client::new();
-    let response = client.get(url).query(&query).send();
-    handle_result_response(response)
 }
 
 pub fn load_file(file_path: &str) -> Result<String, String> {
@@ -26,24 +16,21 @@ pub fn load_file(file_path: &str) -> Result<String, String> {
     }
 }
 
-pub fn handle_result_response(response: Result<Response, Error>) -> Result<String, String> {
-    match response {
-        Ok(response) => {
-            if response.status().is_success() {
-                if let Ok(html) = response.text() {
-                    Ok(html)
-                } else {
-                    Err("Failed to read response body".to_string())
-                }
-            } else {
-                Err(format!(
-                    "HTTP request failed with status: {}",
-                    response.status()
-                ))
-            }
+pub fn parse_key_value_safe(pairs: &[String]) -> Result<Vec<(String, String)>, String> {
+    let mut result = Vec::new();
+
+    for pair in pairs {
+        if let Some((key, value)) = pair.split_once('=') {
+            result.push((key.to_string(), value.to_string()));
+        } else {
+            return Err(format!(
+                "Invalid key-value pair: '{}'. Expected format 'key=value'.",
+                pair
+            ));
         }
-        Err(err) => Err(format!("Failed to fetch remote page: {:?}", err)),
     }
+
+    Ok(result)
 }
 
 #[cfg(test)]
@@ -88,5 +75,65 @@ mod tests {
     #[test]
     fn test_is_server_url_with_partial_https() {
         assert_eq!(is_server_url("https:/example.com"), false);
+    }
+
+    #[test]
+    fn test_parse_key_value_safe_with_valid_pairs() {
+        let input = vec![
+            "key1=value1".to_string(),
+            "key2=value2".to_string(),
+            "key3=value3".to_string(),
+        ];
+        let expected = vec![
+            ("key1".to_string(), "value1".to_string()),
+            ("key2".to_string(), "value2".to_string()),
+            ("key3".to_string(), "value3".to_string()),
+        ];
+        assert_eq!(parse_key_value_safe(&input), Ok(expected));
+    }
+
+    #[test]
+    fn test_parse_key_value_safe_with_invalid_pair() {
+        let input = vec![
+            "key1=value1".to_string(),
+            "invalidpair".to_string(),
+            "key2=value2".to_string(),
+        ];
+        assert!(parse_key_value_safe(&input).is_err());
+    }
+
+    #[test]
+    fn test_parse_key_value_safe_with_empty_input() {
+        let input: Vec<String> = vec![];
+        let expected: Vec<(String, String)> = vec![];
+        assert_eq!(parse_key_value_safe(&input), Ok(expected));
+    }
+
+    #[test]
+    fn test_parse_key_value_safe_with_empty_key() {
+        let input = vec!["=value".to_string()];
+        let expected = vec![("".to_string(), "value".to_string())];
+        assert_eq!(parse_key_value_safe(&input), Ok(expected));
+    }
+
+    #[test]
+    fn test_parse_key_value_safe_with_empty_value() {
+        let input = vec!["key=".to_string()];
+        let expected = vec![("key".to_string(), "".to_string())];
+        assert_eq!(parse_key_value_safe(&input), Ok(expected));
+    }
+
+    #[test]
+    fn test_parse_key_value_safe_with_empty_key_and_value() {
+        let input = vec!["=".to_string()];
+        let expected = vec![("".to_string(), "".to_string())];
+        assert_eq!(parse_key_value_safe(&input), Ok(expected));
+    }
+
+    #[test]
+    fn test_parse_key_value_safe_with_multiple_equals() {
+        let input = vec!["key=value=extra".to_string()];
+        let expected = vec![("key".to_string(), "value=extra".to_string())];
+        assert_eq!(parse_key_value_safe(&input), Ok(expected));
     }
 }

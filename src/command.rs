@@ -18,4 +18,12 @@ pub struct Cli {
     /// Phone number to use for the USSD session
     #[arg(long, default_value = "0312345678")]
     pub phone: String,
+
+     /// Query parameters, e.g. user=chatgpt,id=1,q=dfa
+     #[arg(long, value_delimiter = ',', num_args = 0..)]
+     pub query: Vec<String>,
+ 
+     /// Headers, e.g. Authorization=Bearer123
+     #[arg(long, value_delimiter = ',', num_args = 0..)]
+     pub header: Vec<String>,
 }

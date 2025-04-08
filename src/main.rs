@@ -12,6 +12,7 @@ pub mod runner;
 pub mod ussd_controller;
 pub mod validator_and_transformer;
 pub mod command;
+pub mod http_client;
 
 fn main() {
     let runner = Runner::new(DomTreeAdapter, TerminalRenderer);
