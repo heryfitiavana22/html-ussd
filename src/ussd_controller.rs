@@ -2,7 +2,7 @@ use std::{cell::RefCell, collections::HashMap, path::PathBuf};
 
 use reqwest::{
     Error,
-    blocking::{Client, Response, get},
+    blocking::{Client, Response},
 };
 
 use crate::{
@@ -31,6 +31,8 @@ pub struct UssdController<R: Renderer, T: TagAdapter> {
     pub history: RefCell<Vec<HistoryItem>>,
     pub base_dir: Option<PathBuf>,
     pub use_cache: bool,
+    pub phone: String,
+    pub default_request_data: Vec<(String, String)>,
 }
 
 pub struct NewController<R: Renderer, T: TagAdapter> {
@@ -41,6 +43,8 @@ pub struct NewController<R: Renderer, T: TagAdapter> {
     pub renderer: R,
     pub base_dir: Option<PathBuf>,
     pub use_cache: bool,
+    pub phone: String,
+    pub default_request_data: Vec<(String, String)>,
 }
 
 pub struct DisplayParams {
@@ -60,6 +64,8 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             history: RefCell::new(vec![]),
             base_dir: params.base_dir,
             use_cache: params.use_cache,
+            phone: params.phone,
+            default_request_data: params.default_request_data,
         }
     }
 
@@ -144,7 +150,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                                 self.display_from_file(&next_link.href.url);
                                 return;
                             } else {
-                                self.display_from_server_url(&next_link.href.url);
+                                self.display_from_server_url(&next_link.href.url, index);
                                 return;
                             }
                         }
@@ -161,16 +167,14 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                         if valid {
                             // self.renderer.render_text(format!("form data : {}", user_input);
                             let url = &form.action;
-                            let param_name = &form.input.name;
+                            let param_name = form.input.name.clone();
                             let client = Client::new();
+                            let mut data = vec![(param_name, user_input)];
+                            data.extend(self.default_request_data.clone());
 
                             let response_result = match form.method {
-                                FormMethod::Get => {
-                                    client.get(url).query(&[(param_name, &user_input)]).send()
-                                }
-                                FormMethod::Post => {
-                                    client.post(url).form(&[(param_name, &user_input)]).send()
-                                }
+                                FormMethod::Get => client.get(url).query(&data).send(),
+                                FormMethod::Post => client.post(url).form(&data).send(),
                             };
                             self.handle_response(response_result);
                         } else {
@@ -248,7 +252,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         drop(caches);
     }
 
-    pub fn display_from_server_url(&self, url: &str) {
+    pub fn display_from_server_url(&self, url: &str, user_entry: usize) {
         if let Some(cached_html) = self.get_from_cache(url) {
             // self.renderer.render_text(format!("from cache in display_from_server_url");
 
@@ -259,7 +263,11 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             });
             return;
         }
-        match handle_result_response(get(url)) {
+        let client = Client::new();
+        let mut query = vec![("user_entry".to_string(), user_entry.to_string())];
+        query.extend(self.default_request_data.clone());
+
+        match handle_result_response(client.get(url).query(&query).send()) {
             Ok(html) => {
                 self.set_to_cache(url.to_string(), html.clone());
                 self.display(DisplayParams {

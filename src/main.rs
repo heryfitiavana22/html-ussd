@@ -11,6 +11,7 @@ pub mod renderer;
 pub mod runner;
 pub mod ussd_controller;
 pub mod validator_and_transformer;
+pub mod command;
 
 fn main() {
     let runner = Runner::new(DomTreeAdapter, TerminalRenderer);

@@ -1,31 +1,16 @@
 use std::{collections::HashMap, path::PathBuf};
 
+use clap::Parser;
+
 use crate::{
     adapter::adapter_trait::TagAdapter,
+    command::Cli,
     helper::{fetch_html, is_server_url, load_file},
     i18n::{Lang, init_i18n},
     renderer::renderer_trait::Renderer,
     ussd_controller::{NewController, UssdController},
     validator_and_transformer::ValidatorAndTransformer,
 };
-
-use clap::Parser;
-
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Cli {
-    /// Language to use (en, fr, mg)
-    #[arg(short, long, default_value = "en")]
-    lang: String,
-
-    /// Disable caching when loading files from disk or server.
-    #[arg(long, action = clap::ArgAction::SetTrue)]
-    no_cache: bool,
-
-    /// The starting URL or main file name (e.g. http://localhost:8888 or index.html)
-    #[arg(short, long)]
-    main: String,
-}
 
 pub struct Runner<R: Renderer + Clone, T: TagAdapter + Clone> {
     tag_adapter: T,
@@ -86,6 +71,11 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
 
         // println!("Base dir: {:?}", base_dir);
 
+        let param_phone = "phone".to_string();
+        let param_phone_value = cli.phone.clone();
+
+        let query = vec![(param_phone, param_phone_value)];
+
         let controller = UssdController::new(NewController {
             main_page,
             cache_pages: HashMap::new(),
@@ -94,6 +84,8 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
             validator: ValidatorAndTransformer,
             base_dir,
             use_cache: !cli.no_cache,
+            phone: cli.phone,
+            default_request_data: query,
         });
         controller.run();
     }
