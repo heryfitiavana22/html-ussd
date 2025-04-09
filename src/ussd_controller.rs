@@ -254,7 +254,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         if !self.use_cache {
             return;
         }
-        self.renderer.render_text(format!("set_to_cache : {:?}", key));
+        // self.renderer.render_text(format!("set_to_cache : {:?}", key));
         let mut caches = self.cache_pages.borrow_mut();
         caches.insert(key, value);
         drop(caches);
