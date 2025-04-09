@@ -28,7 +28,7 @@ pub trait TagAdapter {
 
 pub enum AdapterError {
     TagNotFound(Tag),
-    UnexcepetedTag(String),
+    UnexpectedTag(String),
     ParsingError(String),
 }
 

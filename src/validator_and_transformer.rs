@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::{
     helper::is_server_url,
     html::{
@@ -13,7 +15,10 @@ impl ValidatorAndTransformer {
         &self,
         tag_elements: Vec<TagElement>,
     ) -> Result<HtmlUssdTree, ValidatorAndTransformerError> {
-        // FIXME: tag_elements.len() == 1
+        if tag_elements.len() != 1 {
+            return Err(ValidatorAndTransformerError::OneHtmlRootOnly);
+        }
+
         let option_html: Option<&TagElement> = tag_elements.first();
         if option_html.is_none() {
             return Err(ValidatorAndTransformerError::TagNotFound(Tag::Html));
@@ -327,6 +332,7 @@ impl ValidatorAndTransformer {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum ValidatorAndTransformerError {
+    OneHtmlRootOnly,
     TagNotFound(Tag),
     FormAndLinkTogether,
     UnexpectedTag(Tag),
@@ -348,4 +354,79 @@ pub enum ValidatorAndTransformerError {
     MissingTextInTitle,
     InvalidHref(String),
     TextMustBeBeforeLinkOrForm,
+}
+
+impl fmt::Display for ValidatorAndTransformerError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ValidatorAndTransformerError::OneHtmlRootOnly => {
+                write!(f, "Only one <html> root element is allowed.")
+            }
+            ValidatorAndTransformerError::TagNotFound(tag) => write!(f, "Tag not found: {}", tag),
+            ValidatorAndTransformerError::FormAndLinkTogether => {
+                write!(f, "A <form> and a <link> cannot be siblings.")
+            }
+            ValidatorAndTransformerError::UnexpectedTag(tag) => {
+                write!(f, "Unexpected tag : {}", tag)
+            }
+            ValidatorAndTransformerError::TextExpected(tag) => {
+                write!(f, "Text was expected : {}", tag)
+            }
+            ValidatorAndTransformerError::UnexpectedChilds(parent, children) => {
+                write!(f, "Unexpected children in <{}>: ", parent.tag_name)?;
+                for child in children {
+                    write!(f, "<{}> ", child.tag_name)?;
+                }
+                Ok(())
+            }
+            ValidatorAndTransformerError::FormMustHaveOneInput => {
+                write!(f, "Form must have exactly one <input> field.")
+            }
+            ValidatorAndTransformerError::InvalidInputType(input_type) => {
+                write!(f, "Invalid input type: '{}'.", input_type)
+            }
+            ValidatorAndTransformerError::InvalidFormMethod(method) => write!(
+                f,
+                "Invalid form method: '{}'. Expected 'GET' or 'POST'.",
+                method
+            ),
+            ValidatorAndTransformerError::MissingFormAction => {
+                write!(f, "Missing 'action' attribute in <form>.")
+            }
+            ValidatorAndTransformerError::FormActionMustBeServerUrl => {
+                write!(f, "Form action must be a server URL.")
+            }
+            ValidatorAndTransformerError::MissingFormMethod => {
+                write!(f, "Missing 'method' attribute in <form>.")
+            }
+            ValidatorAndTransformerError::EmptyBody => write!(f, "The <body> tag cannot be empty."),
+            ValidatorAndTransformerError::MissingInputType => {
+                write!(f, "Missing 'type' attribute in <input>.")
+            }
+            ValidatorAndTransformerError::MissingInputPlaceholder => {
+                write!(f, "Missing 'placeholder' attribute in <input>.")
+            }
+            ValidatorAndTransformerError::MissingInputName => {
+                write!(f, "Missing 'name' attribute in <input>.")
+            }
+            ValidatorAndTransformerError::MutlipleForm => {
+                write!(f, "Multiple <form> tags found. Only one is allowed.")
+            }
+            ValidatorAndTransformerError::MissingHref => {
+                write!(f, "Missing 'href' attribute in <link>.")
+            }
+            ValidatorAndTransformerError::MissingTextInLink => {
+                write!(f, "Missing text inside <link>.")
+            }
+            ValidatorAndTransformerError::MissingTextInTitle => {
+                write!(f, "Missing text inside <title>.")
+            }
+            ValidatorAndTransformerError::InvalidHref(href) => {
+                write!(f, "Invalid href value: '{}'.", href)
+            }
+            ValidatorAndTransformerError::TextMustBeBeforeLinkOrForm => {
+                write!(f, "Text must come before a <link> or <form>.")
+            }
+        }
+    }
 }

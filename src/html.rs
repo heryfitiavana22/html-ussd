@@ -31,7 +31,7 @@ pub struct Html {
     pub head: Head,
     pub body: Body,
     pub history_enabled: bool,
-    pub cache: bool
+    pub cache: bool,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -121,7 +121,7 @@ impl Display for Tag {
             Tag::Title => write!(f, "title"),
             Tag::Body => write!(f, "body"),
             Tag::P => write!(f, "p"),
-            Tag::Text(content) => write!(f, "{}", content),
+            Tag::Text(content) => write!(f, "text(\"{}\")", content),
             Tag::Link => write!(f, "link"),
             Tag::Form => write!(f, "form"),
             Tag::Input => write!(f, "input"),

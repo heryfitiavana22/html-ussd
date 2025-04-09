@@ -90,7 +90,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             Ok(tags) => tags,
             Err(e) => {
                 self.renderer
-                    .render_error(format!("Adapter error: {:?}", e));
+                    .render_error(format!("Adapter error: {}", e));
                 return;
             }
         };
@@ -99,7 +99,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             Ok(tree) => tree,
             Err(e) => {
                 self.renderer
-                    .render_error(format!("Validation error: {:?}", e));
+                    .render_error(format!("Validation error: {}", e));
                 return;
             }
         };

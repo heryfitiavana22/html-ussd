@@ -27,7 +27,7 @@ impl DomTreeAdapter {
                         "form" => Tag::Form,
                         "input" => Tag::Input,
                         "p" => Tag::P,
-                        _ => return Err(AdapterError::UnexcepetedTag(element.tag_name.clone())),
+                        _ => return Err(AdapterError::UnexpectedTag(element.tag_name.clone())),
                     };
 
                     tags.push(TagElement {
@@ -100,6 +100,6 @@ mod tests {
         let adapter = DomTreeAdapter;
         let result = adapter.transform(html);
 
-        assert!(matches!(result, Err(AdapterError::UnexcepetedTag(tag)) if tag == "button"));
+        assert!(matches!(result, Err(AdapterError::UnexpectedTag(tag)) if tag == "button"));
     }
 }

@@ -55,7 +55,26 @@ impl HttpClient {
                     ))
                 }
             }
-            Err(err) => Err(format!("Failed to fetch remote page: {:?}", err)),
+            Err(err) => Err(format!(
+                "Failed to send HTTP request: {}",
+                self.format_reqwest_error(&err)
+            )),
+        }
+    }
+
+    fn format_reqwest_error(&self, err: &Error) -> String {
+        if err.is_timeout() {
+            "Request timed out.".to_string()
+        } else if err.is_connect() {
+            "Failed to connect to the server.".to_string()
+        } else if err.is_request() {
+            format!("Problem with building the request: {}", err)
+        } else if err.is_status() {
+            format!("Server returned an error status: {}", err)
+        } else if err.is_decode() {
+            format!("Failed to decode the response body: {}", err)
+        } else {
+            format!("Unexpected error: {}", err)
         }
     }
 }
