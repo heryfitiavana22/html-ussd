@@ -20,7 +20,7 @@ features:
   - title: Secure
     details: Add headers, access tokens, query params to every request for full control over external server interactions.
   - title: Multilingual & Extendable
-    details: Easily switch between English, French, and Malagasy 🇲🇬, and plug in your own parser (HTML, JSON, XML...) or renderer thanks to the adapter
+    details: Easily switch between English, French, and Malagasy 🇲🇬, and plug in your own parser (HTML, JSON, XML...) or renderer — thanks to the adapter
 ---
 
 ## Demo
