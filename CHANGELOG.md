@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2025-04-09
+
+### Bug Fixes
+
+- Correct spelling of 'UnexpectedTag' and improve error messages in AdapterError and ValidatorAndTransformerError
+- Don't cache from form action
+- Update installation path to use LOCALAPPDATA for Windows and improve uninstall logic
+- Comment out debug rendering in set_to_cache method
+- Update demo GIF
+
+### Documentation
+
+- Add Validator and Transformer documentation; enhance caching and navigation behavior sections
+- Demo
+- Enhance demo sections in README and index; clarify caching behavior in how-cache-works
+- Correct punctuation in multilingual feature description
+
 ## [1.0.0] - 2025-04-08
 
 ### Features
@@ -25,6 +42,10 @@ All notable changes to this project will be documented in this file.
 
 - Update README and index documentation
 - Update documentation for CLI usage, navigation behavior, security, and caching; enhance examples and add uninstall command
+
+### Miscellaneous Tasks
+
+- Release html-ussd version 1.0.0
 
 ## [0.1.0] - 2025-04-08
 
