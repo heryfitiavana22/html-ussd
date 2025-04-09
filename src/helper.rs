@@ -38,20 +38,20 @@ pub fn parse_key_value_safe(pairs: &[String]) -> Result<Vec<(String, String)>, S
 pub fn uninstall_self() {
     if cfg!(target_os = "windows") {
         use std::env;
-        let home = env::var("USERPROFILE").unwrap_or_else(|_| ".".to_string());
-        let path = format!(
-            r"{}\{}.cargo\bin\html-ussd.exe",
-            home,
-            std::path::MAIN_SEPARATOR
-        );
+        let local_app_data = env::var("LOCALAPPDATA").unwrap_or_else(|_| ".".to_string());
+        let path = format!(r"{}\Programs\html-ussd\bin\html-ussd.exe", local_app_data);
 
-        if std::fs::remove_file(&path).is_ok() {
-            println!("Successfully uninstalled html-ussd from {}", path);
-        } else {
-            eprintln!("Failed to uninstall.");
+        match std::fs::remove_file(&path) {
+            Ok(_) => {
+                println!("Successfully uninstalled html-ussd from {}", path);
+            }
+            Err(err) => {
+                eprintln!("Failed to uninstall: {}", err);
+            }
         }
         return;
     }
+
     let path = "/usr/local/bin/html-ussd";
     let status = Command::new("sudo").arg("rm").arg(path).status();
 
