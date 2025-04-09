@@ -22,3 +22,7 @@ features:
   - title: Multilingual & Extendable
     details: Easily switch between English, French, and Malagasy 🇲🇬, and plug in your own parser (HTML, JSON, XML...) or renderer thanks to the adapter
 ---
+
+## Demo
+
+![Demo](./demo.gif)
