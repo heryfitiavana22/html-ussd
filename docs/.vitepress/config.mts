@@ -48,6 +48,7 @@ export default defineConfig({
             link: "/supporting-custom-input-formats",
           },
           { text: "Security and External Requests", link: "/security" },
+          { text: "Validator and Transformer", link: "/validator-transformer" },
         ],
       },
     ],

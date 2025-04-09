@@ -12,6 +12,11 @@ A `TagAdapter` is a trait responsible for **parsing raw content** (usually HTML)
 
 The default adapter in HTML-USSD is `DomTreeAdapter`, which uses [parse-html](https://github.com/heryfitiavana22/parse-html) under the hood.
 
+> [!NOTE]
+> After parsing, these tags are **validated and normalized** by the [`ValidatorAndTransformer`](./validator-transformer).
+> 
+> This ensures your custom input — even if not HTML — is safely and consistently handled by the core engine.
+
 ## Trait Definition
 
 Here’s what the `TagAdapter` trait looks like:
@@ -89,7 +94,6 @@ fn main() {
 > [!NOTE]  
 > If using local files, include the corresponding file name in the `href` attribute (e.g., `other-page.json`), just as you would with HTML.
 
-
 **From a local file:**
 
 ```bash
@@ -101,4 +105,3 @@ cargo run -- run --main index.json
 ```bash
 cargo run -- run --main http://localhost:8888/
 ```
-

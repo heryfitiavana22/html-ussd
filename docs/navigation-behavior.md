@@ -23,7 +23,7 @@ If the user presses `1`, the request becomes:
 https://html-ussd-example.onrender.com/handle-offre?user_entry=1
 ```
 
-## Form ([`<form>`](./tags/form-tag)):
+## Form ([`<form>`](./tags/form-tag))
 
 Users are prompted to enter a value (text or number). Forms must include:
 

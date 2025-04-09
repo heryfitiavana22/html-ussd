@@ -20,7 +20,7 @@ html-ussd run --main <MAIN>
 | `-l`, `--lang`                    | Language to use (`en`, `fr`, `mg`).                                    |
 | `--phone`                         | Phone number to use for the session. Defaults to `0312345678`.         |
 | `--query`                         | Extra query parameters to include in requests, e.g. `id=1,source=web`. |
-| `--header`                        | Custom HTTP headers for remote requests, e.g. `X-Custom=Value`.       |
+| `--header`                        | Custom HTTP headers for remote requests, e.g. `X-Custom=Value`.        |
 | `--access-token`                  | Shortcut to add a Bearer token in the `Authorization` header.          |
 | [`--no-cache`](./how-cache-works) | Disable cache. Forces reloading of HTML files or pages.                |
 | `-h`, `--help`                    | Show help information.                                                 |
@@ -30,7 +30,7 @@ html-ussd run --main <MAIN>
 
 ## Phone Number
 
-When using the `--phone` option, the phone number will be included in every remote request as a query parameter:
+the `phone` number will be included in every remote request as a query parameter:
 
 ```bash
 html-ussd run --main "https://html-ussd-example.onrender.com/main-page" --phone 0341234567
