@@ -10,6 +10,10 @@ Simulate USSD experiences using plain HTML and run them directly in your termina
 - Built-in multilingual support (EN, FR, MG 🇲🇬)
 - Fully extendable: plug your own parser (e.g. JSON, XML) or renderer
 
+## Demo
+
+![Demo](./docs/demo.gif)
+
 ## Getting Started
 
 To get started quickly, install the CLI:

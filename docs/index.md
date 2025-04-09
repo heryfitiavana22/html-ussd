@@ -25,4 +25,8 @@ features:
 
 ## Demo
 
+See how **HTML-USSD** works right from your terminal:
+
 ![Demo](./demo.gif)
+
+Build menus, navigate links, and submit forms — all from simple HTML pages.
