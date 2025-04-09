@@ -17,6 +17,7 @@ pub struct HistoryItem {
     pub page: String,
     pub is_main_page: bool,
     pub source_url: String,
+    pub is_from_form: bool,
 }
 
 pub struct UssdController<R: Renderer, T: TagAdapter> {
@@ -51,6 +52,7 @@ pub struct DisplayParams {
     pub is_main_page: bool,
     pub is_next_page: bool,
     pub source_url: String,
+    pub is_from_form: bool,
 }
 
 impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
@@ -76,6 +78,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             is_main_page: true,
             is_next_page: true,
             source_url: "main".to_string(),
+            is_from_form: false,
         });
     }
     pub fn display(&self, params: DisplayParams) {
@@ -84,13 +87,13 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             is_main_page,
             is_next_page,
             source_url,
+            is_from_form,
         } = params;
 
         let tags = match self.tag_adapter.transform(html.as_str()) {
             Ok(tags) => tags,
             Err(e) => {
-                self.renderer
-                    .render_error(format!("Adapter error: {}", e));
+                self.renderer.render_error(format!("Adapter error: {}", e));
                 return;
             }
         };
@@ -110,6 +113,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 page: html.to_string(),
                 is_main_page,
                 source_url: source_url.clone(),
+                is_from_form,
             });
             // self.renderer.render_text(format!("is_next_page : {:?}", history);
             // self.renderer.render_text(format!("is_next_page.len : {:?}", history.len());
@@ -119,7 +123,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         let body_content = tree.source.body.content.clone();
         let cache = tree.source.cache;
 
-        if cache {
+        if cache && !is_from_form {
             self.set_to_cache(source_url, html.clone());
         }
 
@@ -185,7 +189,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                                 FormMethod::Get => self.http_client.get(url, get_query),
                                 FormMethod::Post => self.http_client.post(url, data),
                             };
-                            self.display_from_request_result(response_result, url);
+                            self.display_from_request_result(response_result, url, true);
                         } else {
                             self.renderer.render_text(
                                 "Invalid form input: please enter a valid value".to_string(),
@@ -211,6 +215,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 is_main_page: previous.is_main_page,
                 is_next_page: true,
                 source_url: previous.source_url,
+                is_from_form: previous.is_from_form,
             });
         } else {
             drop(history);
@@ -220,6 +225,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 is_main_page: true,
                 is_next_page: true,
                 source_url: "main".to_string(),
+                is_from_form: false,
             });
         }
     }
@@ -234,6 +240,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
             is_main_page: true,
             is_next_page: true,
             source_url: "main".to_string(),
+            is_from_form: false,
         });
     }
 
@@ -247,13 +254,18 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
         if !self.use_cache {
             return;
         }
-        // self.renderer.render_text(format!("set_to_cache : {:?}", key));
+        self.renderer.render_text(format!("set_to_cache : {:?}", key));
         let mut caches = self.cache_pages.borrow_mut();
         caches.insert(key, value);
         drop(caches);
     }
 
-    pub fn display_from_request_result(&self, result: Result<String, String>, url: &str) {
+    pub fn display_from_request_result(
+        &self,
+        result: Result<String, String>,
+        url: &str,
+        is_from_form: bool,
+    ) {
         match result {
             Ok(html) => {
                 self.display(DisplayParams {
@@ -261,6 +273,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                     is_main_page: false,
                     is_next_page: true,
                     source_url: url.to_string(),
+                    is_from_form,
                 });
             }
             Err(err) => {
@@ -279,13 +292,14 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 is_main_page: false,
                 is_next_page: true,
                 source_url: url.to_string(),
+                is_from_form: false,
             });
             return;
         }
         let query = vec![("user_entry".to_string(), user_entry.to_string())];
         let result = self.http_client.get(url, query);
 
-        self.display_from_request_result(result, url)
+        self.display_from_request_result(result, url, false)
     }
 
     pub fn display_from_file(&self, file_path: &str) {
@@ -297,6 +311,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                 is_main_page: false,
                 is_next_page: true,
                 source_url: file_path.to_string(),
+                is_from_form: false,
             });
             return;
         }
@@ -307,6 +322,7 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                     is_main_page: false,
                     is_next_page: true,
                     source_url: file_path.to_string(),
+                    is_from_form: false,
                 });
             }
             Err(err) => {
