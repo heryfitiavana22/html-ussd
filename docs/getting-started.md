@@ -10,10 +10,10 @@ Learn how to quickly install and run **HTML-USSD** to simulate USSD flows.
 curl -sSL https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.sh | bash
 ```
 
-- **Windows(powershell)**
+- **Windows**
 
 ```bash
-irm https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.bat | iex
+curl -o "%TEMP%\install.bat" https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.bat && "%TEMP%\install.bat"
 ```
 
 ## Running the App

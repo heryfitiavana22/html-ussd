@@ -26,10 +26,10 @@ To get started quickly, install the CLI:
 curl -sSL https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.sh | bash
 ```
 
-- **Windows(powershell)**
+- **Windows**
 
 ```bash
-irm https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.bat | iex
+curl -o "%TEMP%\install.bat" https://raw.githubusercontent.com/heryfitiavana22/html-ussd/main/scripts/install.bat && "%TEMP%\install.bat"
 ```
 
 Then run from
