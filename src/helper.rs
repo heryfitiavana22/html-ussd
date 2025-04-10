@@ -1,3 +1,6 @@
+use std::env;
+use std::fs::File;
+use std::io::Write;
 use std::process::Command;
 
 use clap::error::Result;
@@ -37,16 +40,31 @@ pub fn parse_key_value_safe(pairs: &[String]) -> Result<Vec<(String, String)>, S
 
 pub fn uninstall_self() {
     if cfg!(target_os = "windows") {
-        use std::env;
         let local_app_data = env::var("LOCALAPPDATA").unwrap_or_else(|_| ".".to_string());
-        let path = format!(r"{}\Programs\html-ussd\bin\html-ussd.exe", local_app_data);
 
-        match std::fs::remove_file(&path) {
-            Ok(_) => {
-                println!("Successfully uninstalled html-ussd from {}", path);
+        let install_dir = format!(r"{}\Programs\html-ussd", local_app_data);
+        let bat_path = format!(r"{}\Programs\html-ussd\uninstall.bat", local_app_data);
+
+        let bat_content = format!(
+            "@echo off\n\
+            ping 127.0.0.1 -n 3 > nul\n\
+            rmdir /S /Q \"{install_dir}\"\n\
+            del \"%~f0\"\n"
+        );
+        
+        match File::create(&bat_path) {
+            Ok(mut file) => {
+                if file.write_all(bat_content.as_bytes()).is_ok() {
+                    let _ = Command::new("cmd")
+                        .args(["/C", &bat_path])
+                        .spawn();
+                    println!("Successfully uninstalled html-ussd from {}", bat_path);
+                } else {
+                    eprintln!("Failed to write uninstall script.");
+                }
             }
             Err(err) => {
-                eprintln!("Failed to uninstall: {}", err);
+                eprintln!("Failed to create uninstall script: {}", err);
             }
         }
         return;
