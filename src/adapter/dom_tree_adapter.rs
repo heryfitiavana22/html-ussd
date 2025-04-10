@@ -37,11 +37,14 @@ impl DomTreeAdapter {
                     });
                 }
                 Node::Text(text) => {
-                    tags.push(TagElement {
-                        tag_name: Tag::Text(text),
-                        attributes: HashMap::new(),
-                        children: vec![],
-                    });
+                    let safe_text = text.trim();
+                    if !safe_text.is_empty() {
+                        tags.push(TagElement {
+                            tag_name: Tag::Text(text),
+                            attributes: HashMap::new(),
+                            children: vec![],
+                        });
+                    }
                 }
             }
         }
@@ -52,9 +55,8 @@ impl DomTreeAdapter {
 
 impl TagAdapter for DomTreeAdapter {
     fn transform(&self, html: &str) -> Result<Vec<TagElement>, AdapterError> {
-        match DomTree::new::<Lexer, Parser>(html) {
+        match DomTree::new::<Lexer, Parser>(html.trim()) {
             Ok(dom) => self.transform_nodes(dom.nodes.clone()),
-
             Err(e) => Err(AdapterError::ParsingError(e.to_string())),
         }
     }
