@@ -7,7 +7,7 @@ pub fn is_server_url(url: &str) -> bool {
 }
 
 pub fn muted_text(input: &str) -> String {
-    format!("\x1b[90m{} > \x1b[0m", input)
+    format!("\x1b[90m{}\x1b[0m", input)
 }
 
 pub fn load_file(file_path: &str) -> Result<String, String> {

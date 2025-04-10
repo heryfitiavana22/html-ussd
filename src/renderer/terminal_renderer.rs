@@ -71,6 +71,7 @@ impl Renderer for TerminalRenderer {
             }
         };
 
+        input_hint += " > ";
         let readline = rl.readline(muted_text(input_hint.as_str()).as_str());
         match readline {
             Ok(line) => {

@@ -40,7 +40,7 @@ impl DomTreeAdapter {
                     let safe_text = text.trim();
                     if !safe_text.is_empty() {
                         tags.push(TagElement {
-                            tag_name: Tag::Text(text),
+                            tag_name: Tag::Text(safe_text.to_string()),
                             attributes: HashMap::new(),
                             children: vec![],
                         });
