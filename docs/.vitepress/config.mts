@@ -4,6 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "HTML USSD",
   description: "Simulate a USSD experience from HTML in your terminal",
+  base: "/html-ussd/",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [{ text: "Home", link: "/" }],
