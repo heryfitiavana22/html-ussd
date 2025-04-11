@@ -9,7 +9,7 @@ The `<body>` tag contains the **visible content** of your USSD page.
 
 > [!IMPORTANT]
 >
-> - If the `<body>` contains neither [`<a>`](./tags/a-tag) nor a [`<form>`](./tags/form-tag), it is considered a terminal screen. This means the program ends, and no user input is expected.
+> - If the `<body>` contains neither [`<a>`](./a-tag) nor a [`<form>`](./form-tag), it is considered a terminal screen. This means the program ends, and no user input is expected.
 
 
 ## Example
