@@ -426,7 +426,7 @@ dependencies = [
 
 [[package]]
 name = "html-ussd"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "clap",
  "parse-html",
