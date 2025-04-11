@@ -56,7 +56,7 @@ impl HttpClient {
                 }
             }
             Err(err) => Err(format!(
-                "Failed to send HTTP request: {}",
+                "Failed to send HTTP request - {}",
                 self.format_reqwest_error(&err)
             )),
         }
@@ -64,7 +64,12 @@ impl HttpClient {
 
     fn format_reqwest_error(&self, err: &Error) -> String {
         if err.is_timeout() {
-            "Request timed out.".to_string()
+            format!(
+                "Request timed out at URL: {}",
+                err.url()
+                    .map(|url| url.as_str().to_string())
+                    .unwrap_or_else(|| "unknown URL".to_string())
+            )
         } else if err.is_connect() {
             format!(
                 "Failed to connect to the server at URL: {}",

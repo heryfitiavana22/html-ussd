@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.2] - 2025-04-09
+## [1.0.3] - 2025-04-11
+
+### Bug Fixes
+
+- Message error in http_client
+
+## [1.0.2] - 2025-04-11
 
 ### Bug Fixes
 
