@@ -30,7 +30,8 @@ install_bin() {
 
     echo "html-ussd installed"
     rm -rf "$TMP_DIR"
-    echo try running it with: html-ussd run --main "https://html-ussd-example.onrender.com/main-page"
+    echo "Try it with:"
+    echo "   html-ussd run --main \"https://html-ussd-example.onrender.com/main-page\""
 }
 
 detect_os

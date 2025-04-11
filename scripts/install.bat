@@ -29,7 +29,8 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo html-ussd installed.
-echo try running it with: html-ussd run --main "https://html-ussd-example.onrender.com/main-page"
+echo Try it with: 
+echo    html-ussd run --main "https://html-ussd-example.onrender.com/main-page"
 
 del html-ussd.zip
 rd /s /q html-ussd-bin
