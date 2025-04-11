@@ -6,7 +6,7 @@ This page explains how the USSD simulation engine handles user interactions and 
 
 Users select a numeric option (e.g. `1`, `2`, `3`) to navigate between screens.
 
-- When a link is selected, the simulator fetches the target from the href attribute.
+- When a link is selected, the simulator fetches the target from the `href` attribute.
 - The user input (the selected number) is automatically appended to the URL as a query parameter:
   `user_entry=<selected number>`
 

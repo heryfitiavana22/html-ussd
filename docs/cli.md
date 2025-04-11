@@ -26,7 +26,8 @@ html-ussd run --main <MAIN>
 | `-h`, `--help`                    | Show help information.                                                 |
 | `-v`, `--version`                 | Show current version.                                                  |
 
-> [!TIP] > `--query`, `--header`, and `--access-token` are especially useful when working with authenticated APIs or dynamic content. [Learn more](./security).
+> [!TIP]
+> `--query`, `--header`, and `--access-token` are especially useful when working with authenticated APIs or dynamic content. [Learn more](./security).
 
 ## Phone Number
 
@@ -40,7 +41,7 @@ Resulting request: `https://html-ussd-example.onrender.com/main-page?phone=03412
 
 This helps simulate a real user session and can be used by the backend for user identification.
 
-> [!IMPORTANT]
+> [!IMPORTANT] 
 > `?phone=0341234567` will be sent with every request.
 
 ## Examples

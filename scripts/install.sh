@@ -18,18 +18,19 @@ install_bin() {
     URL="https://github.com/$REPO/releases/download/$VERSION/$FILENAME"
     TMP_DIR=$(mktemp -d)
 
-    echo "📦 Downloading $URL..."
+    echo "Downloading $URL..."
     curl -L "$URL" -o "$TMP_DIR/$FILENAME"
 
-    echo "📂 Extracting..."
+    echo "Extracting..."
     tar -xzf "$TMP_DIR/$FILENAME" -C "$TMP_DIR"
 
-    echo "🚀 Installing to /usr/local/bin (sudo required)"
+    echo "Installing to /usr/local/bin (sudo required)"
     sudo mv "$TMP_DIR/html-ussd" /usr/local/bin/
     sudo chmod +x /usr/local/bin/html-ussd
 
-    echo "✅ html-ussd installed"
+    echo "html-ussd installed"
     rm -rf "$TMP_DIR"
+    echo try running it with: html-ussd run --main "https://html-ussd-example.onrender.com/main-page"
 }
 
 detect_os
