@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2025-04-09
+
+### Bug Fixes
+
+- Trim text in dom_tree_adapter
+- Muted_text and input_hint in terminal_renderer
+
 ## [1.0.1] - 2025-04-09
 
 ### Bug Fixes
