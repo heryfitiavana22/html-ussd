@@ -3,7 +3,7 @@ setlocal
 
 set VERSION=v1.0.4
 set REPO=heryfitiavana22/html-ussd
-set URL=https://github.com/%REPO%/releases/download/%VERSION%/html-ussd-windows.zip
+set URL=https://github.com/%REPO%/releases/download/%VERSION%/html-ussd-x86_64-pc-windows-gnu.zip
 set INSTALLATION_DIR=%LOCALAPPDATA%\Programs\html-ussd\bin
 
 if not exist "%INSTALLATION_DIR%" (
