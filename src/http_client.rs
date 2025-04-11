@@ -66,7 +66,12 @@ impl HttpClient {
         if err.is_timeout() {
             "Request timed out.".to_string()
         } else if err.is_connect() {
-            "Failed to connect to the server.".to_string()
+            format!(
+                "Failed to connect to the server at URL: {}",
+                err.url()
+                    .map(|url| url.as_str().to_string())
+                    .unwrap_or_else(|| "unknown URL".to_string())
+            )
         } else if err.is_request() {
             format!("Problem with building the request: {}", err)
         } else if err.is_status() {
