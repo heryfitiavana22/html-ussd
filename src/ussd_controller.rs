@@ -181,13 +181,13 @@ impl<R: Renderer, T: TagAdapter> UssdController<R, T> {
                             // self.renderer.render_text(format!("form data : {}", user_input);
                             let url = &form.action;
                             let param_name = form.input.name.clone();
-                            let mut data = vec![(param_name, user_input)];
-                            data.extend(self.default_request_data.clone());
+                            let data = vec![(param_name, user_input)];
                             let get_query = data.clone();
+                            let post_data = data.clone();
 
                             let response_result = match form.method {
                                 FormMethod::Get => self.http_client.get(url, get_query),
-                                FormMethod::Post => self.http_client.post(url, data),
+                                FormMethod::Post => self.http_client.post(url, post_data),
                             };
                             self.display_from_request_result(response_result, url, true);
                         } else {

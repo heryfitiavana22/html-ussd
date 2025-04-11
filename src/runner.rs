@@ -95,11 +95,13 @@ impl<R: Renderer + Clone, T: TagAdapter + Clone> Runner<R, T> {
                 let param_phone = "phone".to_string();
                 let param_phone_value = phone.clone();
                 let default_request_data = vec![(param_phone, param_phone_value)];
-                let http_client = HttpClient::new(default_query, header);
+                let mut http_query = default_query.clone();
+                http_query.extend(default_request_data.clone());
+                let http_client = HttpClient::new(http_query, header);
 
                 let main_str = main.as_str();
                 if is_server_url(main_str) {
-                    match http_client.get(main_str, default_request_data.clone()) {
+                    match http_client.get(main_str, vec![]) {
                         Ok(html) => {
                             main_page = html;
                             base_dir = None;
