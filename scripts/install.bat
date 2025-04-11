@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set VERSION=v1.0.3
+set VERSION=v1.0.4
 set REPO=heryfitiavana22/html-ussd
 set URL=https://github.com/%REPO%/releases/download/%VERSION%/html-ussd-windows.zip
 set INSTALLATION_DIR=%LOCALAPPDATA%\Programs\html-ussd\bin
