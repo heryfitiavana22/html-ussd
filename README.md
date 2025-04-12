@@ -12,7 +12,11 @@ Simulate USSD experiences using plain HTML and run them directly in your termina
 
 ## Demo
 
-![Demo](./docs/demo.gif)
+
+
+https://github.com/user-attachments/assets/ec47deb2-13fe-4b4c-9e9e-236b00d3199f
+
+
 
 ## Getting Started
 
